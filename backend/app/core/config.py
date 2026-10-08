@@ -24,6 +24,12 @@ class Settings(BaseSettings):
     gemini_max_attempts: int = 3
     extraction_max_pdf_pages: int = 50
     validation_low_confidence_threshold: Decimal = Decimal("0.8")
+    knowledge_base_dir: Path = Path("app/knowledge_base/official")
+    rag_index_dir: Path = Path("app/knowledge_base/.index")
+    gemini_embedding_model: str = "gemini-embedding-001"
+    rag_top_k: int = 5
+    rag_similarity_threshold: Decimal = Decimal("0.45")
+    chat_max_tool_calls: int = 6
     cors_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
     tax_rules_file: Path | None = None
     log_level: str = "INFO"
@@ -83,6 +89,20 @@ class Settings(BaseSettings):
     def validate_confidence_threshold(cls, value: Decimal) -> Decimal:
         if not Decimal("0") <= value <= Decimal("1"):
             raise ValueError("Validation confidence threshold must be between 0 and 1.")
+        return value
+
+    @field_validator("rag_top_k", "chat_max_tool_calls")
+    @classmethod
+    def validate_chat_limits(cls, value: int, info) -> int:
+        if value < 1:
+            raise ValueError(f"{info.field_name} must be at least 1.")
+        return value
+
+    @field_validator("rag_similarity_threshold")
+    @classmethod
+    def validate_similarity_threshold(cls, value: Decimal) -> Decimal:
+        if not Decimal("-1") <= value <= Decimal("1"):
+            raise ValueError("RAG similarity threshold must be between -1 and 1.")
         return value
 
     @field_validator("database_url")

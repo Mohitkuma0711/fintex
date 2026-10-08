@@ -281,6 +281,38 @@ export interface SimulationResult {
   trace_after: TaxTraceStep[]
 }
 
+export interface ChatCitation {
+  source: string
+  section: string
+  link: string
+}
+
+export interface ChatMessage {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
+  citations: ChatCitation[]
+  created_at: string
+}
+
+export interface ChatSession {
+  id: string
+  title: string | null
+  created_at: string
+}
+
+export interface ChatHistory {
+  session: ChatSession
+  messages: ChatMessage[]
+}
+
+export type ChatStreamEvent =
+  | { type: 'status' }
+  | { type: 'delta'; text: string }
+  | { type: 'citations'; citations: ChatCitation[] }
+  | { type: 'done'; messageId: string }
+  | { type: 'error'; message: string }
+
 export interface ExtractionValidationResponse {
   extraction_id: string
   document_name: string
@@ -444,6 +476,114 @@ const simulationSchema = z.object({
   trace_after: z.array(taxTraceStepSchema),
 })
 
+const chatCitationSchema = z.object({
+  source: z.string(),
+  section: z.string(),
+  link: z.url(),
+})
+
+const chatMessageSchema = z.object({
+  id: z.uuid(),
+  role: z.enum(['user', 'assistant']),
+  content: z.string(),
+  citations: z.array(chatCitationSchema),
+  created_at: z.string(),
+})
+
+const chatSessionSchema = z.object({
+  id: z.uuid(),
+  title: z.string().nullable(),
+  created_at: z.string(),
+})
+
+const chatHistorySchema = z.object({
+  session: chatSessionSchema,
+  messages: z.array(chatMessageSchema),
+})
+
+const chatSessionsSchema = z.array(chatSessionSchema)
+
+export async function streamChatMessage(
+  sessionId: string,
+  content: string,
+  onEvent: (event: ChatStreamEvent) => void,
+): Promise<void> {
+  const token = await accessTokenProvider()
+  const headers = new Headers({
+    Accept: 'text/event-stream',
+    'Content-Type': 'application/json',
+  })
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+
+  let response: Response
+  try {
+    response = await fetch(
+      `${API_BASE_URL}/chat/sessions/${encodeURIComponent(sessionId)}/messages/stream`,
+      { method: 'POST', headers, body: JSON.stringify({ content }) },
+    )
+  } catch {
+    throw new ApiError('Unable to reach FinTax AI. Check your connection and retry.', 0)
+  }
+  if (!response.ok) {
+    let message = `Request failed with status ${response.status}.`
+    try {
+      const body: unknown = await response.json()
+      if (typeof body === 'object' && body !== null && 'detail' in body &&
+        typeof body.detail === 'string') message = body.detail
+    } catch {
+      // Retain the HTTP status when the server did not return JSON.
+    }
+    throw new ApiError(message, response.status)
+  }
+  if (!response.body) throw new ApiError('The server did not start a chat stream.', response.status)
+
+  const reader = response.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  let finished = false
+  while (!finished) {
+    const { value, done } = await reader.read()
+    buffer += decoder.decode(value, { stream: !done })
+    let boundary = buffer.indexOf('\n\n')
+    while (boundary >= 0) {
+      const block = buffer.slice(0, boundary).replaceAll('\r', '')
+      buffer = buffer.slice(boundary + 2)
+      const lines = block.split('\n')
+      const eventName = lines.find((line) => line.startsWith('event:'))?.slice(6).trim()
+      const data = lines
+        .filter((line) => line.startsWith('data:'))
+        .map((line) => line.slice(5).trimStart())
+        .join('\n')
+      if (eventName && data) {
+        const payload: unknown = JSON.parse(data)
+        if (eventName === 'status') onEvent({ type: 'status' })
+        if (eventName === 'delta' && typeof payload === 'object' && payload !== null &&
+          'text' in payload && typeof payload.text === 'string') {
+          onEvent({ type: 'delta', text: payload.text })
+        }
+        if (eventName === 'citations') {
+          onEvent({
+            type: 'citations',
+            citations: z.array(chatCitationSchema).parse(payload),
+          })
+        }
+        if (eventName === 'done' && typeof payload === 'object' && payload !== null &&
+          'message_id' in payload && typeof payload.message_id === 'string') {
+          onEvent({ type: 'done', messageId: payload.message_id })
+        }
+        if (eventName === 'error' && typeof payload === 'object' && payload !== null &&
+          'message' in payload && typeof payload.message === 'string') {
+          onEvent({ type: 'error', message: payload.message })
+          finished = true
+        }
+      }
+      boundary = buffer.indexOf('\n\n')
+    }
+    if (done) finished = true
+  }
+  await reader.cancel()
+}
+
 export const fintaxApi = {
   getProfile: async () => userProfileSchema.parse(await apiRequest<unknown>('/me')),
   confirmManualProfile: async (profile: ConfirmedTaxpayerProfile) =>
@@ -532,4 +672,15 @@ export const fintaxApi = {
       profile: toTaxpayerProfileInput(request.profile),
     }),
   })),
+  listChatSessions: async () =>
+  chatSessionsSchema.parse(await apiRequest<unknown>('/chat/sessions')),
+  createChatSession: async (title?: string) =>
+  chatSessionSchema.parse(await apiRequest<unknown>('/chat/sessions', {
+    method: 'POST',
+    body: JSON.stringify(title ? { title } : {}),
+  })),
+  getChatHistory: async (sessionId: string) =>
+  chatHistorySchema.parse(
+    await apiRequest<unknown>(`/chat/sessions/${encodeURIComponent(sessionId)}`),
+  ),
 }

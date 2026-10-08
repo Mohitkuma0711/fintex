@@ -25,8 +25,17 @@ from app.core import auth as auth_module
 from app.core.config import Settings, get_settings
 from app.core.database import get_db_session
 from app.main import app
-from app.models import Base, Document, ExtractionResult, TaxComputation, User
+from app.models import (
+    Base,
+    ChatMessage,
+    ChatSession,
+    Document,
+    ExtractionResult,
+    TaxComputation,
+    User,
+)
 from app.schemas.tax import TaxComparisonResult, TaxpayerProfile
+from app.services.chat.service import ChatService
 from app.services.extraction.gemini import GeminiExtractor
 from app.services.extraction.jobs import ExtractionJob
 from app.services.extraction.orchestrator import ExtractionOrchestrator
@@ -650,6 +659,70 @@ async def test_tax_compare_cache_reuses_result_but_persists_each_request(
             .where(TaxComputation.user_id == user_id)
         )
         assert computations.scalar_one() == 2
+
+
+@pytest.mark.asyncio
+async def test_chat_sse_persists_history_and_enforces_session_ownership(
+    api_client: AsyncClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    async def mock_respond(self: ChatService, session_id: UUID, question: str) -> ChatMessage:
+        assert question == "Explain my saved result."
+        await self.repository.add_message(session_id, "user", question)
+        return await self.repository.add_message(
+            session_id,
+            "assistant",
+            "I'm not sure I can verify that from the available tools.",
+        )
+
+    monkeypatch.setattr(ChatService, "respond", mock_respond)
+    owner_id = uuid4()
+    owner_headers = auth(make_token(owner_id))
+    created = await api_client.post(
+        "/api/v1/chat/sessions",
+        headers=owner_headers,
+        json={"title": "My tax question"},
+    )
+    assert created.status_code == 201
+    session_id = created.json()["id"]
+
+    response = await api_client.post(
+        f"/api/v1/chat/sessions/{session_id}/messages/stream",
+        headers=owner_headers,
+        json={"content": "Explain my saved result."},
+    )
+    assert response.status_code == 200
+    assert "event: delta" in response.text
+    assert "event: citations" in response.text
+    assert "event: done" in response.text
+
+    history = await api_client.get(
+        f"/api/v1/chat/sessions/{session_id}",
+        headers=owner_headers,
+    )
+    assert history.status_code == 200
+    assert [message["role"] for message in history.json()["messages"]] == [
+        "user",
+        "assistant",
+    ]
+    forbidden = await api_client.get(
+        f"/api/v1/chat/sessions/{session_id}",
+        headers=auth(make_token(uuid4())),
+    )
+    assert forbidden.status_code == 404
+
+    async with app.state.test_session_factory() as session:
+        persisted = await session.get(ChatSession, UUID(session_id))
+        assert persisted is not None
+        assert persisted.user_id == owner_id
+        messages = list(
+            (
+                await session.scalars(
+                    select(ChatMessage).where(ChatMessage.chat_session_id == UUID(session_id))
+                )
+            ).all()
+        )
+        assert len(messages) == 2
 
 
 @pytest.mark.asyncio

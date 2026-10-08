@@ -3,8 +3,11 @@ from collections.abc import AsyncIterator, Callable
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.auth import get_current_user
 from app.core.config import Settings, get_settings
 from app.core.database import SessionFactory, get_db_session
+from app.models import User
+from app.services.chat.service import ChatService
 from app.services.documents import DocumentService
 from app.services.extraction.jobs import ExtractionJob
 from app.services.extraction.orchestrator import ExtractionOrchestrator
@@ -65,6 +68,14 @@ async def get_suggestion_service(
     settings: Settings = Depends(get_settings),
 ) -> AsyncIterator[SuggestionService]:
     yield SuggestionService(session, settings)
+
+
+async def get_chat_service(
+    session: AsyncSession = Depends(get_db_session),
+    settings: Settings = Depends(get_settings),
+    user: User = Depends(get_current_user),
+) -> AsyncIterator[ChatService]:
+    yield ChatService(session, settings, user)
 
 
 async def get_user_service(

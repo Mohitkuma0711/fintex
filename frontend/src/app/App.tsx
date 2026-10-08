@@ -18,6 +18,10 @@ const SimulatorPage = lazy(async () => {
   const module = await import('../pages/SimulatorPage')
   return { default: module.SimulatorPage }
 })
+const ChatPage = lazy(async () => {
+  const module = await import('../pages/ChatPage')
+  return { default: module.ChatPage }
+})
 
 export function App() {
   const location = useLocation()
@@ -36,7 +40,7 @@ export function App() {
               <Route path="/review" element={<ReviewPage />} />
               <Route path="/dashboard" element={<Suspense fallback={<main className="container"><p role="status">Loading your tax workspace…</p></main>}><DashboardPage /></Suspense>} />
               <Route path="/simulator" element={<Suspense fallback={<main className="container"><p role="status">Loading the scenario simulator…</p></main>}><SimulatorPage /></Suspense>} />
-              <Route path="/chat" element={<PlaceholderPage page="chat" />} />
+              <Route path="/chat" element={<Suspense fallback={<main className="container"><p role="status">Loading the cited tax assistant…</p></main>}><ChatPage /></Suspense>} />
               <Route path="/report" element={<PlaceholderPage page="report" />} />
             </Route>
             <Route path="*" element={<PlaceholderPage page="not-found" />} />
