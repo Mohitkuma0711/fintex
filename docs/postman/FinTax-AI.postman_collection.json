@@ -1,0 +1,86 @@
+{
+  "info": {
+    "_postman_id": "b49a8be4-44ca-4f7d-9cad-b6cfbf124768",
+    "name": "FinTax AI API",
+    "description": "FinTax AI v1 API. Set base_url and obtain access_token from the configured Supabase project.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000/api/v1" },
+    { "key": "access_token", "value": "" },
+    { "key": "document_id", "value": "" },
+    { "key": "financial_year", "value": "2025-26" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/health"
+      }
+    },
+    {
+      "name": "Get profile",
+      "request": {
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
+        "method": "GET",
+        "url": "{{base_url}}/me"
+      }
+    },
+    {
+      "name": "List documents",
+      "request": {
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
+        "method": "GET",
+        "url": "{{base_url}}/documents"
+      }
+    },
+    {
+      "name": "Create document record",
+      "request": {
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"file_name\": \"form-16.pdf\",\n  \"content_type\": \"application/pdf\",\n  \"size_bytes\": 245760\n}"
+        },
+        "url": "{{base_url}}/documents"
+      }
+    },
+    {
+      "name": "Soft-delete document",
+      "request": {
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
+        "method": "DELETE",
+        "url": "{{base_url}}/documents/{{document_id}}"
+      }
+    },
+    {
+      "name": "Compute tax",
+      "request": {
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"financial_year\": \"{{financial_year}}\",\n  \"regime\": \"new\",\n  \"profile\": {\n    \"salary_components\": {\"basic_salary\": \"0\", \"dearness_allowance\": \"0\", \"hra_received\": \"0\", \"other_allowances\": \"0\"},\n    \"hra_inputs\": {\"rent_paid\": \"0\"},\n    \"other_income\": \"0\",\n    \"deductions_claimed\": {\"section_80c\": \"0\", \"section_80d\": \"0\", \"section_80ccd_1b\": \"0\", \"section_80e\": \"0\", \"section_24b\": \"0\"},\n    \"age_bracket\": \"below_60\",\n    \"city_type\": \"non_metro\"\n  }\n}"
+        },
+        "url": "{{base_url}}/tax/compute"
+      }
+    },
+    {
+      "name": "Compare tax regimes",
+      "request": {
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{access_token}}", "type": "string" }] },
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"financial_year\": \"{{financial_year}}\",\n  \"profile\": {\n    \"salary_components\": {\"basic_salary\": \"0\", \"dearness_allowance\": \"0\", \"hra_received\": \"0\", \"other_allowances\": \"0\"},\n    \"hra_inputs\": {\"rent_paid\": \"0\"},\n    \"other_income\": \"0\",\n    \"deductions_claimed\": {\"section_80c\": \"0\", \"section_80d\": \"0\", \"section_80ccd_1b\": \"0\", \"section_80e\": \"0\", \"section_24b\": \"0\"},\n    \"age_bracket\": \"below_60\",\n    \"city_type\": \"non_metro\"\n  }\n}"
+        },
+        "url": "{{base_url}}/tax/compare"
+      }
+    }
+  ]
+}

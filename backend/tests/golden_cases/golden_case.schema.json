@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FinTax AI hand-verified golden case",
+  "type": "object",
+  "required": ["case_id", "status", "act", "financial_year", "profile", "expected"],
+  "properties": {
+    "case_id": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["TODO", "verified"] },
+    "notes": { "type": "string" },
+    "act": { "type": "string" },
+    "financial_year": { "type": "string" },
+    "profile": { "type": "object" },
+    "expected": {
+      "type": "object",
+      "required": ["old_regime_tax", "new_regime_tax", "recommended_regime", "saving"],
+      "properties": {
+        "old_regime_tax": { "type": ["string", "null"] },
+        "new_regime_tax": { "type": ["string", "null"] },
+        "recommended_regime": { "enum": ["old", "new", null] },
+        "saving": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

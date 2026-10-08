@@ -1,0 +1,1 @@
+"""FinTax AI backend application."""

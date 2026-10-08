@@ -1,0 +1,14 @@
+{
+  "case_id": "zero-income",
+  "status": "TODO",
+  "notes": "TODO: Replace with a hand-calculated example verified against an approved official ruleset.",
+  "act": "TODO: Income-tax Act",
+  "financial_year": "TODO: financial year",
+  "profile": {},
+  "expected": {
+    "old_regime_tax": null,
+    "new_regime_tax": null,
+    "recommended_regime": null,
+    "saving": null
+  }
+}

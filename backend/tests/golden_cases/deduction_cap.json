@@ -1,0 +1,14 @@
+{
+  "case_id": "deduction-cap",
+  "status": "TODO",
+  "notes": "TODO: Select a hand-verified claim above a verified deduction limit and record the official source.",
+  "act": "TODO: Income-tax Act",
+  "financial_year": "TODO: financial year",
+  "profile": {},
+  "expected": {
+    "old_regime_tax": null,
+    "new_regime_tax": null,
+    "recommended_regime": null,
+    "saving": null
+  }
+}

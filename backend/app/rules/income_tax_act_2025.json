@@ -1,0 +1,191 @@
+{
+  "$schema": "./ruleset.schema.json",
+  "schema_version": 1,
+  "act": "Income-tax Act, 2025",
+  "versions": [
+    {
+      "version": "TODO: assign ruleset version",
+      "financial_year": "TODO: assign financial year",
+      "effective_from": null,
+      "suggestion_terms": {
+        "80C_ELSS": { "title": "ELSS investment", "lock_in_period": null, "liquidity_note": null, "status": "TODO", "source_url": null, "effective_from": null },
+        "80C_PPF": { "title": "PPF investment", "lock_in_period": null, "liquidity_note": null, "status": "TODO", "source_url": null, "effective_from": null },
+        "80D": { "title": "Eligible health-insurance premium", "lock_in_period": null, "liquidity_note": null, "status": "TODO", "source_url": null, "effective_from": null },
+        "80CCD(1B)": { "title": "NPS contribution", "lock_in_period": null, "liquidity_note": null, "status": "TODO", "source_url": null, "effective_from": null },
+        "80E": { "title": "Eligible education-loan interest", "lock_in_period": null, "liquidity_note": null, "status": "TODO", "source_url": null, "effective_from": null },
+        "24B": { "title": "Eligible home-loan interest", "lock_in_period": null, "liquidity_note": null, "status": "TODO", "source_url": null, "effective_from": null },
+        "HRA": { "title": "HRA rent documentation", "lock_in_period": null, "liquidity_note": null, "status": "TODO", "source_url": null, "effective_from": null }
+      },
+      "regimes": {
+        "old": {
+          "standard_deduction": {
+            "value": null,
+            "status": "TODO",
+            "source_url": null,
+            "effective_from": null
+          },
+          "hra": {
+            "enabled": {
+              "value": null,
+              "status": "TODO",
+              "source_url": null,
+              "effective_from": null
+            },
+            "rent_less_percent": {
+              "value": null,
+              "status": "TODO",
+              "source_url": null,
+              "effective_from": null
+            },
+            "metro_salary_percent": {
+              "value": null,
+              "status": "TODO",
+              "source_url": null,
+              "effective_from": null
+            },
+            "non_metro_salary_percent": {
+              "value": null,
+              "status": "TODO",
+              "source_url": null,
+              "effective_from": null
+            }
+          },
+          "deductions": {
+            "80C": {
+              "enabled": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "limit": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "limits_by_age": {}
+            },
+            "80D": {
+              "enabled": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "limit": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "limits_by_age": {
+                "below_60": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+                "60_to_79": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+                "80_plus": { "value": null, "status": "TODO", "source_url": null, "effective_from": null }
+              }
+            },
+            "80CCD(1B)": {
+              "enabled": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "limit": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "limits_by_age": {}
+            },
+            "80E": {
+              "enabled": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "limit": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "limits_by_age": {}
+            },
+            "24B": {
+              "enabled": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "limit": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "limits_by_age": {}
+            }
+          },
+          "slabs": [
+            {
+              "lower_bound": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "upper_bound": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "rate": { "value": null, "status": "TODO", "source_url": null, "effective_from": null }
+            }
+          ],
+          "rebate": {
+            "income_threshold": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+            "threshold_inclusive": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+            "maximum": { "value": null, "status": "TODO", "source_url": null, "effective_from": null }
+          },
+          "surcharge_bands": [
+            {
+              "threshold": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "rate": { "value": null, "status": "TODO", "source_url": null, "effective_from": null }
+            }
+          ],
+          "cess_rate": { "value": null, "status": "TODO", "source_url": null, "effective_from": null }
+        },
+        "new": {
+          "standard_deduction": {
+            "value": null,
+            "status": "TODO",
+            "source_url": null,
+            "effective_from": null
+          },
+          "hra": {
+            "enabled": {
+              "value": null,
+              "status": "TODO",
+              "source_url": null,
+              "effective_from": null
+            },
+            "rent_less_percent": {
+              "value": null,
+              "status": "TODO",
+              "source_url": null,
+              "effective_from": null
+            },
+            "metro_salary_percent": {
+              "value": null,
+              "status": "TODO",
+              "source_url": null,
+              "effective_from": null
+            },
+            "non_metro_salary_percent": {
+              "value": null,
+              "status": "TODO",
+              "source_url": null,
+              "effective_from": null
+            }
+          },
+          "deductions": {
+            "80C": {
+              "enabled": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "limit": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "limits_by_age": {}
+            },
+            "80D": {
+              "enabled": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "limit": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "limits_by_age": {
+                "below_60": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+                "60_to_79": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+                "80_plus": { "value": null, "status": "TODO", "source_url": null, "effective_from": null }
+              }
+            },
+            "80CCD(1B)": {
+              "enabled": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "limit": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "limits_by_age": {}
+            },
+            "80E": {
+              "enabled": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "limit": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "limits_by_age": {}
+            },
+            "24B": {
+              "enabled": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "limit": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "limits_by_age": {}
+            }
+          },
+          "slabs": [
+            {
+              "lower_bound": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "upper_bound": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "rate": { "value": null, "status": "TODO", "source_url": null, "effective_from": null }
+            }
+          ],
+          "rebate": {
+            "income_threshold": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+            "threshold_inclusive": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+            "maximum": { "value": null, "status": "TODO", "source_url": null, "effective_from": null }
+          },
+          "surcharge_bands": [
+            {
+              "threshold": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "rate": { "value": null, "status": "TODO", "source_url": null, "effective_from": null }
+            }
+          ],
+          "cess_rate": { "value": null, "status": "TODO", "source_url": null, "effective_from": null }
+        }
+      }
+    }
+  ]
+}

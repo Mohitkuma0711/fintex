@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fintax.example/schemas/income-tax-ruleset.schema.json",
+  "title": "FinTax AI versioned income-tax rules",
+  "description": "All numeric values are decimal strings, never JSON numbers. Null rule values and TODO status are intentional and prevent calculations.",
+  "type": "object",
+  "required": ["schema_version", "act", "versions"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schema_version": { "const": 1 },
+    "act": { "type": "string", "minLength": 1 },
+    "versions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/version" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "source": {
+      "type": "object",
+      "required": ["source_url", "effective_from", "status"],
+      "properties": {
+        "source_url": { "type": ["string", "null"], "format": "uri" },
+        "effective_from": { "type": ["string", "null"], "format": "date" },
+        "status": { "enum": ["TODO", "verified"] },
+        "value": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "booleanRule": {
+      "type": "object",
+      "required": ["source_url", "effective_from", "status", "value"],
+      "properties": {
+        "source_url": { "type": ["string", "null"], "format": "uri" },
+        "effective_from": { "type": ["string", "null"], "format": "date" },
+        "status": { "enum": ["TODO", "verified"] },
+        "value": { "type": ["boolean", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "suggestionTerms": {
+      "type": "object",
+      "required": ["title", "lock_in_period", "liquidity_note", "status", "source_url", "effective_from"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "lock_in_period": { "type": ["string", "null"] },
+        "liquidity_note": { "type": ["string", "null"] },
+        "status": { "enum": ["TODO", "verified"] },
+        "source_url": { "type": ["string", "null"], "format": "uri" },
+        "effective_from": { "type": ["string", "null"], "format": "date" }
+      },
+      "additionalProperties": false
+    },
+    "version": {
+      "type": "object",
+      "required": ["version", "financial_year", "effective_from", "regimes"],
+      "properties": {
+        "version": { "type": "string", "minLength": 1 },
+        "financial_year": { "type": "string", "minLength": 1 },
+        "effective_from": { "type": ["string", "null"], "format": "date" },
+        "suggestion_terms": {
+          "type": "object",
+          "properties": {
+            "80C_ELSS": { "$ref": "#/$defs/suggestionTerms" },
+            "80C_PPF": { "$ref": "#/$defs/suggestionTerms" },
+            "80D": { "$ref": "#/$defs/suggestionTerms" },
+            "80CCD(1B)": { "$ref": "#/$defs/suggestionTerms" },
+            "80E": { "$ref": "#/$defs/suggestionTerms" },
+            "24B": { "$ref": "#/$defs/suggestionTerms" },
+            "HRA": { "$ref": "#/$defs/suggestionTerms" }
+          },
+          "additionalProperties": false
+        },
+        "regimes": {
+          "type": "object",
+          "required": ["old", "new"],
+          "properties": {
+            "old": { "$ref": "#/$defs/regime" },
+            "new": { "$ref": "#/$defs/regime" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "hra": {
+      "type": "object",
+      "required": ["enabled", "rent_less_percent", "metro_salary_percent", "non_metro_salary_percent"],
+      "properties": {
+        "enabled": { "$ref": "#/$defs/booleanRule" },
+        "rent_less_percent": { "$ref": "#/$defs/source" },
+        "metro_salary_percent": { "$ref": "#/$defs/source" },
+        "non_metro_salary_percent": { "$ref": "#/$defs/source" }
+      },
+      "additionalProperties": false
+    },
+    "deduction": {
+      "type": "object",
+      "required": ["enabled", "limit", "limits_by_age"],
+      "properties": {
+        "enabled": { "$ref": "#/$defs/booleanRule" },
+        "limit": { "$ref": "#/$defs/source" },
+        "limits_by_age": {
+          "type": "object",
+          "properties": {
+            "below_60": { "$ref": "#/$defs/source" },
+            "60_to_79": { "$ref": "#/$defs/source" },
+            "80_plus": { "$ref": "#/$defs/source" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "surchargeBand": {
+      "type": "object",
+      "required": ["threshold", "rate"],
+      "properties": {
+        "threshold": { "$ref": "#/$defs/source" },
+        "rate": { "$ref": "#/$defs/source" }
+      },
+      "additionalProperties": false
+    },
+    "slab": {
+      "type": "object",
+      "required": ["lower_bound", "upper_bound", "rate"],
+      "properties": {
+        "lower_bound": { "$ref": "#/$defs/source" },
+        "upper_bound": { "$ref": "#/$defs/source" },
+        "rate": { "$ref": "#/$defs/source" }
+      },
+      "additionalProperties": false
+    },
+    "rebate": {
+      "type": "object",
+      "required": ["income_threshold", "threshold_inclusive", "maximum"],
+      "properties": {
+        "income_threshold": { "$ref": "#/$defs/source" },
+        "threshold_inclusive": { "$ref": "#/$defs/booleanRule" },
+        "maximum": { "$ref": "#/$defs/source" }
+      },
+      "additionalProperties": false
+    },
+    "regime": {
+      "type": "object",
+      "required": ["standard_deduction", "hra", "deductions", "slabs", "rebate", "surcharge_bands", "cess_rate"],
+      "properties": {
+        "standard_deduction": { "$ref": "#/$defs/source" },
+        "hra": { "$ref": "#/$defs/hra" },
+        "deductions": {
+          "type": "object",
+          "required": ["80C", "80D", "80CCD(1B)", "80E", "24B"],
+          "properties": {
+            "80C": { "$ref": "#/$defs/deduction" },
+            "80D": { "$ref": "#/$defs/deduction" },
+            "80CCD(1B)": { "$ref": "#/$defs/deduction" },
+            "80E": { "$ref": "#/$defs/deduction" },
+            "24B": { "$ref": "#/$defs/deduction" }
+          },
+          "additionalProperties": false
+        },
+        "slabs": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/slab" } },
+        "rebate": { "$ref": "#/$defs/rebate" },
+        "surcharge_bands": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/surchargeBand" } },
+        "cess_rate": { "$ref": "#/$defs/source" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

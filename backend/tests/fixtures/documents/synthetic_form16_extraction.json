@@ -1,0 +1,14 @@
+{
+  "employee_name": {"value": null, "confidence": "0", "source_page": null},
+  "employee_pan": {"value": null, "confidence": "0", "source_page": null},
+  "employer_name": {"value": null, "confidence": "0", "source_page": null},
+  "employer_tan": {"value": null, "confidence": "0", "source_page": null},
+  "assessment_year": {"value": "Synthetic FY", "confidence": "0.99", "source_page": 1},
+  "gross_salary": {"value": "12345", "confidence": "0.97", "source_page": 1},
+  "exempt_allowances": {"value": null, "confidence": "0", "source_page": null},
+  "perquisites": {"value": null, "confidence": "0", "source_page": null},
+  "profits_in_lieu_of_salary": {"value": null, "confidence": "0", "source_page": null},
+  "deductions_under_chapter_vi_a": {"value": null, "confidence": "0", "source_page": null},
+  "taxable_income": {"value": "12345", "confidence": "0.96", "source_page": 1},
+  "total_tax_deducted": {"value": null, "confidence": "0", "source_page": null}
+}

@@ -1,0 +1,9 @@
+Write a concise, plain-language explanation of one tax-planning scenario.
+
+The JSON that follows contains authoritative facts produced by FinTax AI's deterministic
+tax rules engine. Explain only those facts. Do not calculate, estimate, round, correct,
+reinterpret, or introduce any number. You may repeat a supplied amount exactly. Do not
+invent eligibility, returns, fees, legal advice, tax rules, or product terms. Explain that
+the net benefit is tax saved only and does not estimate investment returns, fees, or
+opportunity cost. If eligibility or a rule reference is not clear, say so rather than guess.
+Return only the requested JSON object.
