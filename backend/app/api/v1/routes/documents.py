@@ -43,6 +43,7 @@ async def upload_document(
         description="PDF, JPG, or PNG; maximum size is configured by the server.",
     ),
     document_type: Literal["form16", "salary_slip"] = Form("form16"),
+    auto_delete_after_30_days: bool = Form(False),
     user: User = Depends(get_current_user),
     service: DocumentService = Depends(get_document_service),
     extraction_job: ExtractionJob = Depends(get_extraction_job),
@@ -54,6 +55,7 @@ async def upload_document(
         declared_content_type=file.content_type or "",
         content=content,
         document_type=document_type,
+        auto_delete_after_30_days=auto_delete_after_30_days,
     )
     background_tasks.add_task(extraction_job.run, document.id)
     return response

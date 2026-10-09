@@ -66,7 +66,8 @@ class GeminiExtractor:
         pages: Sequence[tuple[int, str]] | None = None,
         document_bytes: bytes | None = None,
     ) -> ExtractionSchema:
-        if self.settings.google_api_key is None:
+        api_key = self.settings.google_api_key or self.settings.gemini_api_key
+        if api_key is None:
             raise ExtractionError(
                 ExtractionErrorCode.NOT_CONFIGURED, "Gemini extraction is not configured."
             )
@@ -85,7 +86,7 @@ class GeminiExtractor:
             )
 
         client = genai.Client(
-            api_key=self.settings.google_api_key.get_secret_value(),
+            api_key=api_key.get_secret_value(),
             http_options=types.HttpOptions(
                 timeout=self.settings.gemini_timeout_seconds * 1000,
                 retry_options=types.HttpRetryOptions(attempts=1),

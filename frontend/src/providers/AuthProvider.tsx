@@ -1,84 +1,70 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
-import type { User } from '@supabase/supabase-js'
-import { setApiAccessTokenProvider } from '../lib/api'
-import { supabase, supabaseConfigured } from '../lib/supabase'
-import { AuthContext } from './auth-context'
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react'
+import {
+  GoogleAuthProvider,
+  browserLocalPersistence,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  setPersistence,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+  type User,
+} from 'firebase/auth'
+import { clearApiResponseCache, setApiAccessTokenProvider } from '../lib/api'
+import { mintDevAuthToken } from '../lib/dev-auth-token'
+import { auth } from '../lib/firebase'
+import { AuthContext, type AuthContextValue } from './auth-context'
+
+export { useAuth } from './useAuth'
+
+const useDevAuthTokens = import.meta.env.VITE_AUTH_TEST_MODE === 'true'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(supabaseConfigured)
-  const [authError, setAuthError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!supabase) return
-    let active = true
-    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (active) setUser(session?.user ?? null)
+    void setPersistence(auth, browserLocalPersistence)
+    setApiAccessTokenProvider(async () => {
+      const current = auth.currentUser
+      if (!current) return null
+      if (useDevAuthTokens) return mintDevAuthToken(current.uid)
+      return current.getIdToken()
     })
-    void supabase.auth.getSession().then(({ data: sessionData, error }) => {
-      if (active) {
-        setUser(sessionData.session?.user ?? null)
-        setAuthError(error?.message ?? null)
-        setLoading(false)
-      }
-    }).catch((error: unknown) => {
-      if (active) {
-        setAuthError(error instanceof Error ? error.message : 'Unable to load your session.')
-        setLoading(false)
-      }
+    const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
+      setUser(nextUser)
+      setLoading(false)
+      clearApiResponseCache()
     })
     return () => {
-      active = false
-      data.subscription.unsubscribe()
+      unsubscribe()
+      setApiAccessTokenProvider(async () => null)
     }
   }, [])
 
-  useEffect(() => {
-    setApiAccessTokenProvider(async () => {
-      if (!supabase) return null
-      const { data, error } = await supabase.auth.getSession()
-      if (error) throw error
-      return data.session?.access_token ?? null
-    })
-  }, [])
-
-  const signIn = useCallback(async (email: string, password: string) => {
-    if (!supabase) throw new Error('Supabase authentication is not configured.')
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) throw error
-    setUser(data.user)
-  }, [])
-
-  const signUp = useCallback(async (email: string, password: string) => {
-    if (!supabase) throw new Error('Supabase authentication is not configured.')
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { emailRedirectTo: `${window.location.origin}/login` },
-    })
-    if (error) throw error
-    if (data.user && data.session) setUser(data.user)
-    return data.session !== null
-  }, [])
-
-  const signOut = useCallback(async () => {
-    if (!supabase) throw new Error('Supabase authentication is not configured.')
-    const { error } = await supabase.auth.signOut()
-    if (error) throw error
-    setUser(null)
-  }, [])
-
-  const value = useMemo(
+  const value = useMemo<AuthContextValue>(
     () => ({
       user,
       loading,
-      configured: supabaseConfigured,
-      authError,
-      signIn,
-      signUp,
-      signOut,
+      async signInWithEmail(email, password) {
+        await signInWithEmailAndPassword(auth, email, password)
+      },
+      async signUpWithEmail(email, password) {
+        await createUserWithEmailAndPassword(auth, email, password)
+      },
+      async signInWithGoogle() {
+        await signInWithPopup(auth, new GoogleAuthProvider())
+      },
+      async signOutUser() {
+        await signOut(auth)
+      },
     }),
-    [user, loading, authError, signIn, signUp, signOut],
+    [loading, user],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

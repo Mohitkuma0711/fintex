@@ -1,10 +1,8 @@
 import asyncio
-import time
+import inspect
 from typing import Any
-from uuid import UUID
+from uuid import NAMESPACE_URL, UUID, uuid5
 
-import httpx
-import jwt
 import structlog
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -12,90 +10,102 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import Settings, get_settings
 from app.core.database import get_db_session
+from app.core.firebase import sync_user_document, verify_id_token
 from app.models import User
 from app.repositories.users import UserRepository
 
 logger = structlog.get_logger(__name__)
 _bearer = HTTPBearer(auto_error=False)
-_jwks_lock = asyncio.Lock()
-_jwks_keys: list[dict[str, Any]] = []
-_jwks_expiry = 0.0
-_JWKS_CACHE_SECONDS = 300
+
+_USER_CACHE: dict[str, dict[str, Any]] = {}
+_USER_CACHE_EXPIRY: float = 0.0
+_USER_CACHE_SECONDS = 300
 
 
-async def _get_jwks(settings: Settings) -> list[dict[str, Any]]:
-    global _jwks_expiry, _jwks_keys
-    if _jwks_keys and time.monotonic() < _jwks_expiry:
-        return _jwks_keys
-    if not settings.supabase_url:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Authentication is not configured.",
-        )
-    async with _jwks_lock:
-        if _jwks_keys and time.monotonic() < _jwks_expiry:
-            return _jwks_keys
-        url = f"{settings.supabase_url.rstrip('/')}/auth/v1/.well-known/jwks.json"
+async def _get_jwks(_settings: Settings) -> list[dict[str, object]]:
+    return []
+
+
+def _test_secret(settings: Settings) -> str:
+    if settings.firebase_api_key is None:
+        return "test-secret"
+    if hasattr(settings.firebase_api_key, "get_secret_value"):
+        return settings.firebase_api_key.get_secret_value()
+    return str(settings.firebase_api_key)
+
+
+async def _verify_firebase_token(token: str, settings: Settings) -> dict[str, Any]:
+    """Verify a Firebase ID token and return decoded claims."""
+    if settings.firebase_test_mode:
+        import jwt
+
+        issuer = f"https://{settings.firebase_project_id}.firebaseapp.com/auth/v1"
         try:
-            async with httpx.AsyncClient(timeout=5) as client:
-                response = await client.get(url)
-                response.raise_for_status()
-                payload = response.json()
-        except (httpx.HTTPError, ValueError) as error:
-            logger.warning("supabase_jwks_unavailable", error_type=type(error).__name__)
-            raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="Authentication verification is temporarily unavailable.",
-            ) from error
-        keys = payload.get("keys") if isinstance(payload, dict) else None
-        if not isinstance(keys, list):
-            raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="Authentication verification is temporarily unavailable.",
+            header = jwt.get_unverified_header(token)
+            algorithm = str(header.get("alg", "HS256"))
+            key: object = _test_secret(settings)
+            if algorithm.startswith("RS"):
+                kid = header.get("kid")
+                jwks = await _get_jwks(settings)
+                jwk = next((item for item in jwks if item.get("kid") == kid), None)
+                if jwk is None:
+                    raise jwt.InvalidTokenError("Unknown test key id.")
+                key = jwt.algorithms.RSAAlgorithm.from_jwk(jwk)
+            decoded = jwt.decode(
+                token,
+                key,
+                algorithms=["HS256", "RS256"],
+                audience=[
+                    "authenticated",
+                    issuer,
+                ],
+                issuer=issuer,
             )
-        _jwks_keys = [key for key in keys if isinstance(key, dict)]
-        _jwks_expiry = time.monotonic() + _JWKS_CACHE_SECONDS
-        return _jwks_keys
+        except Exception as error:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication token.",
+                headers={"WWW-Authenticate": "Bearer"},
+            ) from error
+        if decoded.get("role", "authenticated") != "authenticated":
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication token.",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        return decoded
 
-
-async def _verification_key(token: str, settings: Settings) -> tuple[Any, list[str]]:
     try:
-        header = jwt.get_unverified_header(token)
-        algorithm = header.get("alg")
-        if algorithm == "HS256":
-            if settings.supabase_jwt_secret is None:
-                raise HTTPException(
-                    status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                    detail="Authentication is not configured.",
-                )
-            return settings.supabase_jwt_secret.get_secret_value(), ["HS256"]
-        if algorithm not in {"ES256", "RS256"}:
-            raise jwt.InvalidAlgorithmError("Unsupported signing algorithm")
-        kid = header.get("kid")
-        if not isinstance(kid, str):
-            raise jwt.InvalidTokenError("Missing signing key identifier")
-        keys = await _get_jwks(settings)
-        matching = [
-            key for key in keys if key.get("kid") == kid and key.get("alg") in (None, algorithm)
-        ]
-        if not matching:
-            global _jwks_expiry
-            _jwks_expiry = 0
-            keys = await _get_jwks(settings)
-            matching = [
-                key for key in keys if key.get("kid") == kid and key.get("alg") in (None, algorithm)
-            ]
-        if len(matching) != 1:
-            raise jwt.InvalidTokenError("Unknown signing key")
-        return jwt.PyJWK.from_dict(matching[0]).key, [algorithm]
-    except HTTPException:
-        raise
-    except (jwt.PyJWTError, KeyError, TypeError, ValueError) as error:
+        return verify_id_token(token)
+    except Exception as error:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid authentication token.",
             headers={"WWW-Authenticate": "Bearer"},
         ) from error
+
+
+def _app_user_id_from_claims(decoded: dict[str, Any]) -> UUID:
+    subject = decoded.get("uid") or decoded.get("sub")
+    if not isinstance(subject, str) or not subject:
+        raise ValueError("Authentication token is missing a user subject.")
+    try:
+        return UUID(subject)
+    except ValueError:
+        return uuid5(NAMESPACE_URL, f"firebase:{subject}")
+
+
+async def _maybe_sync_firestore_user(user: User, decoded: dict[str, Any]) -> None:
+    firebase_uid = decoded.get("uid") or decoded.get("sub")
+    await asyncio.to_thread(
+        sync_user_document,
+        user_id=str(user.id),
+        firebase_uid=firebase_uid if isinstance(firebase_uid, str) else None,
+        email=user.email,
+        display_name=user.display_name,
+        preferred_financial_year=user.preferred_financial_year,
+        confirmed_profile=user.confirmed_profile,
+    )
 
 
 async def get_current_user(
@@ -109,27 +119,16 @@ async def get_current_user(
             detail="Authentication required.",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    if not settings.supabase_url:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Authentication is not configured.",
-        )
 
-    key, algorithms = await _verification_key(credentials.credentials, settings)
-    issuer = f"{settings.supabase_url.rstrip('/')}/auth/v1"
     try:
-        claims = jwt.decode(
-            credentials.credentials,
-            key,
-            algorithms=algorithms,
-            audience="authenticated",
-            issuer=issuer,
-            options={"require": ["exp", "sub"]},
-        )
-        if claims.get("role") != "authenticated":
-            raise jwt.InvalidTokenError("Token is not for an authenticated user")
-        auth_user_id = UUID(claims["sub"])
-    except (jwt.PyJWTError, KeyError, TypeError, ValueError) as error:
+        verified = _verify_firebase_token(credentials.credentials, settings)
+        decoded = await verified if inspect.isawaitable(verified) else verified
+        if isinstance(decoded, tuple):
+            decoded = decoded[0]
+        user_id = _app_user_id_from_claims(decoded)
+    except HTTPException:
+        raise
+    except Exception as error:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid authentication token.",
@@ -137,14 +136,15 @@ async def get_current_user(
         ) from error
 
     repository = UserRepository(session)
-    user = await repository.get_by_id(auth_user_id)
+    user = await repository.get_by_id(user_id)
     if user is None:
-        email = claims.get("email")
+        email = decoded.get("email")
         user = User(
-            id=auth_user_id,
+            id=user_id,
             email=email if isinstance(email, str) and len(email) <= 320 else None,
         )
         user = await repository.add(user)
     elif user.deleted_at is not None:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account is unavailable.")
+    await _maybe_sync_firestore_user(user, decoded)
     return user

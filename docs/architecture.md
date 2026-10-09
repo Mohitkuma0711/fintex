@@ -1,8 +1,9 @@
 # Architecture
 
-The initial system is organized into four layers. The current scaffold exposes
-hello-world applications only; the modules below reserve clear boundaries for
-future implementation.
+The system is organized into four layers. The API and frontend implement the
+document, review, calculation, suggestions, chat, reports, filing-guidance, and
+privacy workflows, with tax-rule and external-provider capabilities remaining
+explicitly gated where their production inputs are not yet verified.
 
 ```mermaid
 flowchart TB

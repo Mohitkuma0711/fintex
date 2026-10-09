@@ -102,16 +102,8 @@ def test_alternative_80c_products_are_not_double_counted_in_summary() -> None:
     drafts = build_suggestion_drafts(_confirmed_profile(), _matching_test_rules())
     expected = sum(
         (
-            max(
-                draft.net_benefit
-                for draft in drafts
-                if draft.alternative_group == "80C"
-            ),
-            *(
-                draft.net_benefit
-                for draft in drafts
-                if draft.alternative_group is None
-            ),
+            max(draft.net_benefit for draft in drafts if draft.alternative_group == "80C"),
+            *(draft.net_benefit for draft in drafts if draft.alternative_group is None),
         ),
         Decimal("0"),
     )

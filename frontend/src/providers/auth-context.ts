@@ -1,14 +1,13 @@
 import { createContext } from 'react'
-import type { User } from '@supabase/supabase-js'
+import type { User } from 'firebase/auth'
 
 export interface AuthContextValue {
   user: User | null
   loading: boolean
-  configured: boolean
-  authError: string | null
-  signIn: (email: string, password: string) => Promise<void>
-  signUp: (email: string, password: string) => Promise<boolean>
-  signOut: () => Promise<void>
+  signInWithEmail: (email: string, password: string) => Promise<void>
+  signUpWithEmail: (email: string, password: string) => Promise<void>
+  signInWithGoogle: () => Promise<void>
+  signOutUser: () => Promise<void>
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null)

@@ -1,27 +1,17 @@
-import { lazy, Suspense } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { AppShell } from '../components/layout/AppShell'
+import { LandingPage } from '../pages/LandingPage'
+import { AuthPage } from '../pages/AuthPage'
+import { UploadPage } from '../pages/UploadPage'
+import { ReportPage } from '../pages/ReportPage'
+import { FilingGuidancePage } from '../pages/FilingGuidancePage'
+import { DashboardPage } from '../pages/DashboardPage'
+import { SimulatorPage } from '../pages/SimulatorPage'
+import { ChatPage } from '../pages/ChatPage'
+import { PlaceholderPage } from '../pages/PlaceholderPage'
 import { PageTransition } from '../components/motion/PageTransition'
 import { ProtectedRoute } from '../components/auth/ProtectedRoute'
-import { AuthPage } from '../pages/AuthPage'
-import { LandingPage } from '../pages/LandingPage'
-import { PlaceholderPage } from '../pages/PlaceholderPage'
-import { ReviewPage } from '../pages/ReviewPage'
-import { UploadPage } from '../pages/UploadPage'
-
-const DashboardPage = lazy(async () => {
-  const module = await import('../pages/DashboardPage')
-  return { default: module.DashboardPage }
-})
-const SimulatorPage = lazy(async () => {
-  const module = await import('../pages/SimulatorPage')
-  return { default: module.SimulatorPage }
-})
-const ChatPage = lazy(async () => {
-  const module = await import('../pages/ChatPage')
-  return { default: module.ChatPage }
-})
 
 export function App() {
   const location = useLocation()
@@ -32,17 +22,13 @@ export function App() {
         <PageTransition key={location.pathname}>
           <Routes location={location}>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<AuthPage mode="login" />} />
-            <Route path="/signup" element={<AuthPage mode="signup" />} />
-            <Route element={<ProtectedRoute />}>
-              <Route path="/onboarding" element={<PlaceholderPage page="onboarding" />} />
-              <Route path="/upload" element={<UploadPage />} />
-              <Route path="/review" element={<ReviewPage />} />
-              <Route path="/dashboard" element={<Suspense fallback={<main className="container"><p role="status">Loading your tax workspace…</p></main>}><DashboardPage /></Suspense>} />
-              <Route path="/simulator" element={<Suspense fallback={<main className="container"><p role="status">Loading the scenario simulator…</p></main>}><SimulatorPage /></Suspense>} />
-              <Route path="/chat" element={<Suspense fallback={<main className="container"><p role="status">Loading the cited tax assistant…</p></main>}><ChatPage /></Suspense>} />
-              <Route path="/report" element={<PlaceholderPage page="report" />} />
-            </Route>
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/upload" element={<ProtectedRoute><UploadPage /></ProtectedRoute>} />
+            <Route path="/report" element={<ProtectedRoute><ReportPage /></ProtectedRoute>} />
+            <Route path="/filing-guidance" element={<ProtectedRoute><FilingGuidancePage /></ProtectedRoute>} />
+            <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+            <Route path="/simulator" element={<ProtectedRoute><SimulatorPage /></ProtectedRoute>} />
+            <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
             <Route path="*" element={<PlaceholderPage page="not-found" />} />
           </Routes>
         </PageTransition>

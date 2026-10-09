@@ -1,123 +1,114 @@
 import { useState, type FormEvent } from 'react'
-import { z } from 'zod'
-import { ArrowLeft, ArrowRight, LockKeyhole } from 'lucide-react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { useAuth } from '../providers/useAuth'
+import { ArrowLeft, Mail, ShieldCheck } from 'lucide-react'
+import { Link, Navigate, useLocation } from 'react-router-dom'
+import { useAuth } from '../providers/AuthProvider'
 
-const credentialsSchema = z.object({
-  email: z.email(),
-  password: z.string().min(8, 'Use at least 8 characters for your password.'),
-})
+type AuthMode = 'sign-in' | 'sign-up'
 
-interface AuthPageProps {
-  mode: 'login' | 'signup'
-}
-
-export function AuthPage({ mode }: AuthPageProps) {
-  const { configured, authError, signIn, signUp } = useAuth()
-  const navigate = useNavigate()
+export function AuthPage() {
   const location = useLocation()
+  const { signInWithEmail, signInWithGoogle, signUpWithEmail, user } = useAuth()
+  const [mode, setMode] = useState<AuthMode>('sign-in')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [notice, setNotice] = useState('')
+  const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
-  const isSignup = mode === 'signup'
+  const from = (location.state as { from?: { pathname?: string } } | null)?.from?.pathname ?? '/upload'
+
+  if (user) {
+    return <Navigate replace to={from} />
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    setError('')
-    setNotice('')
-    const credentials = credentialsSchema.safeParse({ email: email.trim(), password })
-    if (!credentials.success) {
-      setError(credentials.error.issues[0]?.message ?? 'Enter valid sign-in details.')
-      return
-    }
-    if (!configured) {
-      setError('Authentication is not configured. Add the Supabase URL and public anon key.')
-      return
-    }
-
+    setError(null)
     setSubmitting(true)
     try {
-      if (isSignup) {
-        const hasSession = await signUp(credentials.data.email, credentials.data.password)
-        if (!hasSession) {
-          setNotice('Check your email for the Supabase confirmation link to finish creating your account.')
-          return
-        }
+      if (mode === 'sign-in') {
+        await signInWithEmail(email, password)
       } else {
-        await signIn(credentials.data.email, credentials.data.password)
+        await signUpWithEmail(email, password)
       }
-      const state = location.state as { next?: unknown } | null
-      const next = typeof state?.next === 'string' && state.next.startsWith('/') &&
-        !state.next.startsWith('//')
-        ? state.next
-        : '/dashboard'
-      navigate(next, { replace: true })
-    } catch (authError) {
-      setError(authError instanceof Error ? authError.message : 'Unable to complete authentication.')
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'Authentication failed.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  async function handleGoogle() {
+    setError(null)
+    setSubmitting(true)
+    try {
+      await signInWithGoogle()
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'Google sign-in failed.')
     } finally {
       setSubmitting(false)
     }
   }
 
   return (
-    <section className="auth-page container">
-      <div className="auth-page__back">
-        <Link className="text-link" to="/">
-          <ArrowLeft aria-hidden="true" size={15} /> FinTax AI home
-        </Link>
-        <span><LockKeyhole aria-hidden="true" size={14} /> Secure Supabase sign-in</span>
-      </div>
+    <section className="auth-page">
+      <Link className="auth-page__back" to="/">
+        <span>
+          <ArrowLeft aria-hidden="true" size={18} />
+          Home
+        </span>
+      </Link>
+
       <div className="auth-card">
-        <div aria-hidden="true" className="auth-card__mark">f<span>.</span></div>
-        <p className="eyebrow">{isSignup ? 'YOUR PRIVATE TAX WORKSPACE' : 'WELCOME BACK'}</p>
-        <h1>{isSignup ? 'Create your account.' : 'Sign in to FinTax AI.'}</h1>
+        <div className="auth-card__mark" aria-hidden="true">
+          <ShieldCheck size={28} />
+          <span>Firebase secured</span>
+        </div>
+        <p className="eyebrow">Private tax workspace</p>
+        <h1>{mode === 'sign-in' ? 'Sign in to FinTax AI' : 'Create your FinTax AI account'}</h1>
         <p className="auth-card__intro">
-          {isSignup
-            ? 'Your account is secured by Supabase. Your tax documents stay private.'
-            : 'Continue to your private, personalized tax workspace.'}
+          Your Firebase identity is used for API access and private Firestore profile records.
         </p>
-        {!configured && (
-          <div className="auth-notice" role="status">
-            Supabase is not configured in this environment. Add the values from
-            <code>frontend/.env.example</code> to <code>frontend/.env.local</code> and restart Vite.
-          </div>
-        )}
-        {authError && <p className="auth-form__error" role="alert">{authError}</p>}
+
         <form className="auth-form" onSubmit={handleSubmit}>
-          <label htmlFor="auth-email">Email address</label>
-          <input
-            autoComplete="email"
-            id="auth-email"
-            name="email"
-            onChange={(event) => setEmail(event.target.value)}
-            required
-            type="email"
-            value={email}
-          />
-          <label htmlFor="auth-password">Password</label>
-          <input
-            autoComplete={isSignup ? 'new-password' : 'current-password'}
-            id="auth-password"
-            minLength={8}
-            name="password"
-            onChange={(event) => setPassword(event.target.value)}
-            required
-            type="password"
-            value={password}
-          />
-          {error && <p className="auth-form__error" role="alert">{error}</p>}
-          {notice && <p className="auth-form__notice" role="status">{notice}</p>}
-          <button className="button button--primary auth-form__submit" disabled={submitting} type="submit">
-            {submitting ? 'Please wait…' : isSignup ? 'Create account' : 'Sign in'}
-            <ArrowRight aria-hidden="true" size={16} />
+          <label>
+            Email
+            <input
+              autoComplete="email"
+              onChange={(event) => setEmail(event.target.value)}
+              required
+              type="email"
+              value={email}
+            />
+          </label>
+          <label>
+            Password
+            <input
+              autoComplete={mode === 'sign-in' ? 'current-password' : 'new-password'}
+              minLength={6}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+              type="password"
+              value={password}
+            />
+          </label>
+          {error && <p className="auth-form__error">{error}</p>}
+          <button className="auth-form__submit" disabled={submitting} type="submit">
+            <Mail aria-hidden="true" size={17} />
+            {mode === 'sign-in' ? 'Sign in' : 'Create account'}
           </button>
         </form>
+
+        <button className="auth-form__submit" disabled={submitting} onClick={handleGoogle} type="button">
+          Continue with Google
+        </button>
+
         <p className="auth-card__switch">
-          {isSignup ? 'Already have an account?' : 'New to FinTax AI?'}{' '}
-          <Link to={isSignup ? '/login' : '/signup'}>{isSignup ? 'Sign in' : 'Create an account'}</Link>
+          {mode === 'sign-in' ? 'New here?' : 'Already have an account?'}{' '}
+          <button
+            onClick={() => setMode(mode === 'sign-in' ? 'sign-up' : 'sign-in')}
+            type="button"
+          >
+            {mode === 'sign-in' ? 'Create an account' : 'Sign in'}
+          </button>
         </p>
       </div>
     </section>

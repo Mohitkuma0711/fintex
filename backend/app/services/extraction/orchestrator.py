@@ -4,11 +4,11 @@ from app.core.config import Settings
 from app.services.extraction.errors import ExtractionError
 from app.services.extraction.gemini import GeminiExtractor, extraction_schema, prompt_for_document
 from app.services.extraction.strategy import select_extraction_input
-from app.services.storage.supabase_storage import SupabaseStorage
+from app.services.storage.firebase_storage import FirebaseStorage
 
 
 class ExtractionOrchestrator:
-    def __init__(self, settings: Settings, storage: SupabaseStorage) -> None:
+    def __init__(self, settings: Settings, storage: FirebaseStorage) -> None:
         self.settings = settings
         self.storage = storage
         self.gemini = GeminiExtractor(settings)

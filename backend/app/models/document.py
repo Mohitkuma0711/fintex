@@ -1,6 +1,7 @@
+from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy import BigInteger, ForeignKey, String, Uuid
+from sqlalchemy import BigInteger, DateTime, ForeignKey, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base, TimestampSoftDelete, UUIDPrimaryKey
@@ -20,3 +21,4 @@ class Document(UUIDPrimaryKey, TimestampSoftDelete, Base):
     document_type: Mapped[str] = mapped_column(String(32), nullable=False, default="form16")
     scan_status: Mapped[str] = mapped_column(String(32), nullable=False, default="not_scanned")
     extraction_error_code: Mapped[str | None] = mapped_column(String(60), nullable=True)
+    auto_delete_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

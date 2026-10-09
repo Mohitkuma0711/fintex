@@ -59,12 +59,13 @@ export function UploadPage() {
   const [documentId, setDocumentId] = useState<string | null>(null)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [dropError, setDropError] = useState('')
+  const [autoDeleteAfter30Days, setAutoDeleteAfter30Days] = useState(false)
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
   const upload = useMutation({
     mutationFn: (file: File) =>
-      fintaxApi.uploadDocument(file, documentType, setUploadProgress),
+      fintaxApi.uploadDocument(file, documentType, setUploadProgress, autoDeleteAfter30Days),
     onSuccess: async (result) => {
       setDocumentId(result.id)
       setUploadProgress(100)
@@ -190,6 +191,14 @@ export function UploadPage() {
               <span>or <span className="upload-dropzone__browse">browse files</span></span>
               <small>PDF, JPG, or PNG · Up to 50 MiB</small>
             </button>
+            <label className="upload-retention-option">
+              <input
+                checked={autoDeleteAfter30Days}
+                onChange={(event) => setAutoDeleteAfter30Days(event.currentTarget.checked)}
+                type="checkbox"
+              />
+              <span>Automatically delete this uploaded file after 30 days</span>
+            </label>
             {selectedFile && (
               <div className="upload-selected-file">
                 {selectedFile.type === 'application/pdf'

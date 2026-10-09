@@ -1,3 +1,4 @@
+from datetime import UTC, datetime, timedelta
 from pathlib import PurePosixPath
 from uuid import UUID, uuid4
 
@@ -6,6 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import Settings
+from app.core.pii import mask_pan, mask_pans_in_text
 from app.models import Document, User
 from app.repositories.documents import DocumentRepository
 from app.schemas.extraction import (
@@ -15,7 +17,7 @@ from app.schemas.extraction import (
     SalarySlipExtraction,
 )
 from app.services.extraction.errors import ExtractionError
-from app.services.storage.supabase_storage import SupabaseStorage
+from app.services.storage.firebase_storage import FirebaseStorage
 
 _FILE_TYPES = {
     ".pdf": ("application/pdf", "pdf"),
@@ -43,7 +45,7 @@ def detect_document_type(content: bytes) -> tuple[str, str]:
 
 
 class DocumentService:
-    def __init__(self, session: AsyncSession, settings: Settings, storage: SupabaseStorage) -> None:
+    def __init__(self, session: AsyncSession, settings: Settings, storage: FirebaseStorage) -> None:
         self.repository = DocumentRepository(session)
         self.settings = settings
         self.storage = storage
@@ -59,6 +61,7 @@ class DocumentService:
         declared_content_type: str,
         content: bytes,
         document_type: str,
+        auto_delete_after_30_days: bool = False,
     ) -> tuple[DocumentUploadResponse, Document]:
         if len(content) > self.settings.max_upload_size_bytes:
             raise HTTPException(
@@ -69,7 +72,7 @@ class DocumentService:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="Uploaded document is empty."
             )
-        safe_name = PurePosixPath(file_name.replace("\\", "/")).name
+        safe_name = mask_pans_in_text(PurePosixPath(file_name.replace("\\", "/")).name)
         if (
             not safe_name
             or len(safe_name) > 255
@@ -96,7 +99,7 @@ class DocumentService:
             )
 
         document_id = uuid4()
-        object_path = SupabaseStorage.object_path(user.id, document_id, extension)
+        object_path = FirebaseStorage.object_path(user.id, document_id, extension)
         await self.storage.upload(object_path, content, detected_content_type)
         try:
             signed_url = await self.storage.create_signed_url(object_path)
@@ -113,6 +116,9 @@ class DocumentService:
             status="pending",
             document_type=document_type,
             scan_status="not_scanned",
+            auto_delete_at=(
+                datetime.now(UTC) + timedelta(days=30) if auto_delete_after_30_days else None
+            ),
         )
         try:
             document = await self.repository.add(document)
@@ -130,6 +136,9 @@ class DocumentService:
             scan_status=document.scan_status,
             signed_url=signed_url,
             signed_url_expires_in=self.settings.storage_signed_url_ttl_seconds,
+            auto_delete_at=(
+                document.auto_delete_at.isoformat() if document.auto_delete_at else None
+            ),
         )
         return response, document
 
@@ -141,11 +150,18 @@ class DocumentService:
             Form16Extraction if document.document_type == "form16" else SalarySlipExtraction
         )
         extraction = await self.repository.get_extraction_for_document(document.id)
-        payload = extraction_model.model_validate(extraction.payload) if extraction else None
+        if extraction:
+            payload_data = dict(extraction.payload)
+            pan_field = payload_data.get("employee_pan")
+            if isinstance(pan_field, dict) and isinstance(pan_field.get("value"), str):
+                pan_field["value"] = mask_pan(pan_field["value"])
+            payload = extraction_model.model_validate(payload_data)
+        else:
+            payload = None
         return DocumentExtractionResponse(
             id=document.id,
             extraction_id=extraction.id if extraction else None,
-            file_name=document.file_name,
+            file_name=mask_pans_in_text(document.file_name),
             document_type=document.document_type,
             status=document.status,
             scan_status=document.scan_status,

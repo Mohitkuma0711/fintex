@@ -74,6 +74,7 @@ class DocumentUploadResponse(ExtractionModel):
     scan_status: str
     signed_url: str
     signed_url_expires_in: int
+    auto_delete_at: str | None = None
 
 
 class DocumentExtractionResponse(ExtractionModel):

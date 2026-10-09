@@ -6,18 +6,18 @@ from app.core.config import Settings
 
 def test_blank_optional_environment_values_are_treated_as_unconfigured() -> None:
     settings = Settings(
-        supabase_url="",
-        supabase_anon_key="",
-        supabase_jwt_secret="",
+        firebase_api_key="",
+        firebase_auth_domain="",
+        firebase_storage_bucket="",
         tax_rules_file="",
     )
 
-    assert settings.supabase_url is None
-    assert settings.supabase_anon_key is None
-    assert settings.supabase_jwt_secret is None
+    assert settings.firebase_api_key is None
+    assert settings.firebase_auth_domain is None
+    assert settings.firebase_storage_bucket is None
     assert settings.tax_rules_file is None
 
 
-def test_legacy_hmac_secret_must_have_sufficient_entropy_length() -> None:
-    with pytest.raises(ValidationError, match="at least 32 characters"):
-        Settings(supabase_jwt_secret=SecretStr("too-short"))
+def test_missing_firebase_api_key_raises_validation_error() -> None:
+    with pytest.raises(ValidationError):
+        Settings(firebase_api_key="short")

@@ -36,6 +36,10 @@ class UpdateUserRequest(ApiModel):
     preferred_financial_year: str | None = Field(default=None, max_length=20)
 
 
+class DeleteMyDataRequest(ApiModel):
+    confirmation: Literal["DELETE"]
+
+
 class DocumentCreateRequest(ApiModel):
     file_name: str = Field(min_length=1, max_length=255)
     content_type: str = Field(min_length=1, max_length=120)

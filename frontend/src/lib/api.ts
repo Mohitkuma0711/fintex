@@ -15,15 +15,30 @@ export class ApiError extends Error {
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api/v1'
 type AccessTokenProvider = () => Promise<string | null>
 let accessTokenProvider: AccessTokenProvider = async () => null
+const responseCache = new Map<string, unknown>()
+let latestReportBlob: Blob | null = null
 
 export function setApiAccessTokenProvider(provider: AccessTokenProvider): void {
   accessTokenProvider = provider
+}
+
+export function clearApiResponseCache(): void {
+  responseCache.clear()
+  latestReportBlob = null
+}
+
+function notifyOfflineFallback(): void {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('fintax:offline-fallback'))
+  }
 }
 
 export async function apiRequest<T>(
   path: string,
   init: RequestInit = {},
 ): Promise<T> {
+  const method = (init.method ?? 'GET').toUpperCase()
+  const cacheable = method === 'GET'
   let response: Response
   const token = await accessTokenProvider()
   const headers = new Headers(init.headers)
@@ -39,10 +54,18 @@ export async function apiRequest<T>(
       headers,
     })
   } catch {
+    if (cacheable && responseCache.has(path)) {
+      notifyOfflineFallback()
+      return structuredClone(responseCache.get(path)) as T
+    }
     throw new ApiError('Unable to reach FinTax AI. Check your connection and retry.', 0)
   }
 
   if (!response.ok) {
+    if (cacheable && response.status >= 500 && responseCache.has(path)) {
+      notifyOfflineFallback()
+      return structuredClone(responseCache.get(path)) as T
+    }
     let message = `Request failed with status ${response.status}.`
     let code: string | undefined
 
@@ -59,10 +82,19 @@ export async function apiRequest<T>(
     throw new ApiError(message, response.status, code)
   }
 
-  if (response.status === 204) return undefined as T
+  if (response.status === 204) {
+    if (!cacheable) clearApiResponseCache()
+    return undefined as T
+  }
 
   try {
-    return (await response.json()) as T
+    const payload: unknown = await response.json()
+    if (cacheable) responseCache.set(path, payload)
+    else clearApiResponseCache()
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('fintax:api-online'))
+    }
+    return payload as T
   } catch {
     throw new ApiError('The server returned an unreadable response.', response.status)
   }
@@ -146,6 +178,18 @@ export interface DocumentRecord {
 export interface DocumentUploadResponse extends Omit<DocumentRecord, 'created_at'> {
   signed_url: string
   signed_url_expires_in: number
+  auto_delete_at: string | null
+}
+
+export interface FilingGuidance {
+  status: 'profile_required' | 'guidance_only'
+  likely_forms: string[]
+  guidance: string
+  schedules_to_review: string[]
+  documents_to_prepare: string[]
+  prefilled_summary: Record<string, unknown> | null
+  official_source: string
+  disclaimer: string
 }
 
 export interface ExtractedField {
@@ -169,6 +213,7 @@ export async function uploadDocument(
   file: File,
   documentType: 'form16' | 'salary_slip',
   onProgress: (percentage: number) => void,
+  autoDeleteAfter30Days = false,
 ): Promise<DocumentUploadResponse> {
   const token = await accessTokenProvider()
   return new Promise((resolve, reject) => {
@@ -176,6 +221,7 @@ export async function uploadDocument(
     const form = new FormData()
     form.append('file', file)
     form.append('document_type', documentType)
+    form.append('auto_delete_after_30_days', String(autoDeleteAfter30Days))
     request.open('POST', `${API_BASE_URL}/documents`)
     request.timeout = 120_000
     request.setRequestHeader('Accept', 'application/json')
@@ -212,6 +258,7 @@ export async function uploadDocument(
         reject(new ApiError('The server returned an invalid upload response.', request.status))
         return
       }
+      clearApiResponseCache()
       resolve(validated.data)
     }
     request.onerror = () => reject(new ApiError('Unable to reach FinTax AI. Check your connection and retry.', 0))
@@ -333,6 +380,18 @@ const documentUploadSchema = z.object({
   scan_status: z.string(),
   signed_url: z.url(),
   signed_url_expires_in: z.number().int().positive(),
+  auto_delete_at: z.string().nullable(),
+})
+
+const filingGuidanceSchema = z.object({
+  status: z.enum(['profile_required', 'guidance_only']),
+  likely_forms: z.array(z.string()),
+  guidance: z.string(),
+  schedules_to_review: z.array(z.string()),
+  documents_to_prepare: z.array(z.string()),
+  prefilled_summary: z.record(z.string(), z.unknown()).nullable(),
+  official_source: z.url(),
+  disclaimer: z.string(),
 })
 
 const documentExtractionSchema = z.object({
@@ -683,4 +742,42 @@ export const fintaxApi = {
   chatHistorySchema.parse(
     await apiRequest<unknown>(`/chat/sessions/${encodeURIComponent(sessionId)}`),
   ),
+  getFilingGuidance: async () =>
+    filingGuidanceSchema.parse(await apiRequest<unknown>('/filing-guidance')),
+  downloadLatestReport: async () => {
+    const token = await accessTokenProvider()
+    const headers = new Headers({ Accept: 'application/pdf' })
+    if (token) headers.set('Authorization', `Bearer ${token}`)
+    let response: Response
+    try {
+      response = await fetch(`${API_BASE_URL}/reports/latest.pdf`, { headers })
+    } catch {
+      if (latestReportBlob) {
+        notifyOfflineFallback()
+        return latestReportBlob.slice()
+      }
+      throw new ApiError('Unable to reach FinTax AI. Check your connection and retry.', 0)
+    }
+    if (!response.ok) {
+      if (response.status >= 500 && latestReportBlob) {
+        notifyOfflineFallback()
+        return latestReportBlob.slice()
+      }
+      let message = `Request failed with status ${response.status}.`
+      try {
+        const body: unknown = await response.json()
+        if (typeof body === 'object' && body !== null && 'detail' in body &&
+          typeof body.detail === 'string') message = body.detail
+      } catch {
+        // Keep the status message if a PDF error response was not JSON.
+      }
+      throw new ApiError(message, response.status)
+    }
+    latestReportBlob = await response.blob()
+    return latestReportBlob.slice()
+  },
+  deleteMyData: () => apiRequest<void>('/me/data', {
+    method: 'DELETE',
+    body: JSON.stringify({ confirmation: 'DELETE' }),
+  }),
 }

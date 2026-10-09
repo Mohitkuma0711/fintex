@@ -4,12 +4,13 @@ from uuid import UUID
 import structlog
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from app.core.pii import mask_pan
 from app.models import ExtractionResult
 from app.repositories.documents import DocumentRepository
 from app.services.extraction.errors import ExtractionError, ExtractionErrorCode
 from app.services.extraction.orchestrator import ExtractionOrchestrator
 from app.services.extraction.virus_scan import VirusScanner, scan_document
-from app.services.storage.supabase_storage import SupabaseStorage
+from app.services.storage.firebase_storage import FirebaseStorage
 
 logger = structlog.get_logger(__name__)
 
@@ -18,7 +19,7 @@ class ExtractionJob:
     def __init__(
         self,
         session_factory: async_sessionmaker[AsyncSession],
-        storage: SupabaseStorage,
+        storage: FirebaseStorage,
         orchestrator: ExtractionOrchestrator,
         virus_scanner: VirusScanner,
     ) -> None:
@@ -97,6 +98,9 @@ class ExtractionJob:
             content=content,
         )
         result_payload: dict[str, Any] = result.model_dump(mode="json")
+        pan_field = result_payload.get("employee_pan")
+        if isinstance(pan_field, dict) and isinstance(pan_field.get("value"), str):
+            pan_field["value"] = mask_pan(pan_field["value"])
         model_version = self.orchestrator.settings.gemini_model
 
         async with self.session_factory() as session:

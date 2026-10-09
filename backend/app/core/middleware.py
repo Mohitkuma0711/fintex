@@ -1,5 +1,7 @@
 import re
 import time
+from collections import Counter
+from threading import Lock
 from uuid import uuid4
 
 import structlog
@@ -10,6 +12,27 @@ from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 _REQUEST_ID_PATTERN = re.compile(r"^[A-Za-z0-9._-]{1,100}$")
 logger = structlog.get_logger(__name__)
+_usage_lock = Lock()
+_usage_counts: Counter[tuple[str, str]] = Counter()
+
+
+def usage_snapshot() -> dict[str, int]:
+    with _usage_lock:
+        return {
+            f"{route}:{status_class}": count
+            for (route, status_class), count in sorted(_usage_counts.items())
+        }
+
+
+class UsageMetricsMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+        response = await call_next(request)
+        route = request.scope.get("route")
+        route_name = getattr(route, "name", None) or "unmatched"
+        status_class = f"{response.status_code // 100}xx"
+        with _usage_lock:
+            _usage_counts[(str(route_name), status_class)] += 1
+        return response
 
 
 class RequestIdMiddleware(BaseHTTPMiddleware):
@@ -31,6 +54,34 @@ class RequestIdMiddleware(BaseHTTPMiddleware):
             return response
         finally:
             structlog.contextvars.clear_contextvars()
+
+
+class SecurityHeadersMiddleware:
+    def __init__(self, app: ASGIApp, *, production: bool) -> None:
+        self.app = app
+        self.production = production
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        async def send_with_security_headers(message: Message) -> None:
+            if message["type"] == "http.response.start":
+                headers = list(message.get("headers", []))
+                headers.extend(
+                    [
+                        (b"x-content-type-options", b"nosniff"),
+                        (b"x-frame-options", b"DENY"),
+                        (b"referrer-policy", b"strict-origin-when-cross-origin"),
+                        (b"permissions-policy", b"camera=(), microphone=(), geolocation=()"),
+                        (b"content-security-policy", b"default-src 'none'; frame-ancestors 'none'"),
+                    ]
+                )
+                if self.production:
+                    headers.append(
+                        (b"strict-transport-security", b"max-age=31536000; includeSubDomains")
+                    )
+                message["headers"] = headers
+            await send(message)
+
+        await self.app(scope, receive, send_with_security_headers)
 
 
 class UploadSizeLimitMiddleware:

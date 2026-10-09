@@ -583,6 +583,7 @@ export function ReviewPage() {
                                 : 'verify-field__input'
                             }
                             placeholder={empty ? 'Enter value from the document' : ''}
+                            readOnly={key === 'employee_pan' && Boolean(field.value)}
                             type="text"
                             {...form.register(`field_values.${key.replaceAll('.', '__')}`)}
                           />

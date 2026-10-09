@@ -4,11 +4,12 @@ from typing import Any
 
 import structlog
 
+from app.core.pii import redact_pans_in_text
+
 _SENSITIVE_KEY = re.compile(
     r"(pan|name|email|salary|amount|income|taxpayer|document|content|payload|token|secret|auth)",
     re.IGNORECASE,
 )
-_PAN_PATTERN = re.compile(r"\b[A-Z]{5}[0-9]{4}[A-Z]\b", re.IGNORECASE)
 
 
 def _redact(value: Any, key: str = "") -> Any:
@@ -19,7 +20,7 @@ def _redact(value: Any, key: str = "") -> Any:
     if isinstance(value, (list, tuple)):
         return [_redact(item) for item in value]
     if isinstance(value, str):
-        return _PAN_PATTERN.sub("[REDACTED]", value)
+        return redact_pans_in_text(value)
     return value
 
 

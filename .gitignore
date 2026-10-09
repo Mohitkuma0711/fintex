@@ -30,3 +30,9 @@ artifacts/*.png
 /fintax-*.png
 /verify-*.png
 backend/app/knowledge_base/.index/
+backend/.local_storage/
+.vercel/
+frontend/test-results/
+frontend/playwright-report/
+firestore-debug.log
+backend/coverage.xml

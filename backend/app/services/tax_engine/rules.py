@@ -187,8 +187,7 @@ class RulesetVersion(RuleModel):
                 problems.append(f"suggestion_terms.{key}.effective_from is missing")
         if problems:
             raise RuleConfigurationError(
-                f"Ruleset {self.version!r} has incomplete suggestion terms: "
-                + "; ".join(problems)
+                f"Ruleset {self.version!r} has incomplete suggestion terms: " + "; ".join(problems)
             )
 
     @staticmethod

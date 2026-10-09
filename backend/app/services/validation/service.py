@@ -7,6 +7,7 @@ from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import Settings
+from app.core.pii import mask_pan, mask_pans_in_text
 from app.models import Document, ExtractionResult, User
 from app.repositories.documents import DocumentRepository
 from app.repositories.users import UserRepository
@@ -16,7 +17,7 @@ from app.schemas.validation import (
     ConfirmExtractionResponse,
     ExtractionValidationResponse,
 )
-from app.services.storage.supabase_storage import SupabaseStorage
+from app.services.storage.firebase_storage import FirebaseStorage
 from app.services.tax_engine.rules import (
     RULES_FILE,
     RuleConfigurationError,
@@ -34,7 +35,7 @@ class ExtractionValidationService:
         self,
         session: AsyncSession,
         settings: Settings,
-        storage: SupabaseStorage,
+        storage: FirebaseStorage,
     ) -> None:
         self.session = session
         self.settings = settings
@@ -50,12 +51,13 @@ class ExtractionValidationService:
             section_80c_cap=self._verified_80c_cap(extraction),
         )
         preview_url = await self.storage.create_signed_url(document.storage_path)
+        response_extraction = self._masked_extraction(extraction)
         return ExtractionValidationResponse(
             extraction_id=extraction_row.id,
-            document_name=document.file_name,
+            document_name=mask_pans_in_text(document.file_name),
             document_type=document.document_type,
             preview_url=preview_url,
-            fields=extraction,
+            fields=response_extraction,
             issues=issues,
             is_confirmed=extraction_row.confirmed_at is not None,
         )
@@ -104,6 +106,9 @@ class ExtractionValidationService:
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail="One or more edited fields are not part of this extraction.",
             )
+        pan_field = payload.get("employee_pan")
+        if isinstance(pan_field, dict) and isinstance(pan_field.get("value"), str):
+            pan_field["value"] = mask_pan(pan_field["value"])
         try:
             confirmed_extraction = type(extraction).model_validate(payload)
         except ValidationError as error:
@@ -139,7 +144,7 @@ class ExtractionValidationService:
         await self.session.refresh(extraction_row)
         return ConfirmExtractionResponse(
             extraction_id=extraction_row.id,
-            fields=confirmed_extraction,
+            fields=self._masked_extraction(confirmed_extraction),
             profile=request.profile,
             confirmed_at=confirmed_at,
             issues=issues,
@@ -170,6 +175,19 @@ class ExtractionValidationService:
             Form16Extraction if document.document_type == "form16" else SalarySlipExtraction
         )
         return extraction_model.model_validate(extraction_row.payload)
+
+    @staticmethod
+    def _masked_extraction(
+        extraction: Form16Extraction | SalarySlipExtraction,
+    ) -> Form16Extraction | SalarySlipExtraction:
+        if not isinstance(extraction, Form16Extraction):
+            return extraction
+        pan_field = extraction.employee_pan
+        return extraction.model_copy(
+            update={
+                "employee_pan": pan_field.model_copy(update={"value": mask_pan(pan_field.value)})
+            }
+        )
 
     def _verified_80c_cap(
         self, extraction: Form16Extraction | SalarySlipExtraction

@@ -11,6 +11,7 @@ import jwt
 import pytest
 import pytest_asyncio
 from cryptography.hazmat.primitives.asymmetric import rsa
+from fastapi import Depends
 from httpx import ASGITransport, AsyncClient
 from pydantic import BaseModel
 from sqlalchemy import func, select
@@ -18,6 +19,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 from app.api.v1.dependencies import (
     get_extraction_job,
+    get_privacy_service,
     get_storage,
     require_configured_rules,
 )
@@ -39,11 +41,12 @@ from app.services.chat.service import ChatService
 from app.services.extraction.gemini import GeminiExtractor
 from app.services.extraction.jobs import ExtractionJob
 from app.services.extraction.orchestrator import ExtractionOrchestrator
+from app.services.privacy import PrivacyService
 from app.services.tax_engine.rules import RulesetVersion
 from tests.unit.tax_engine_fixtures import build_test_rules
 
 TEST_JWT_SECRET = "test-only-secret-key-that-is-never-used-outside-tests"
-SUPABASE_URL = "https://test-project.supabase.co"
+FIREBASE_PROJECT_ID = "fintax-cbad3"
 FIXTURE_DIRECTORY = Path(__file__).parents[1] / "fixtures" / "documents"
 FORM16_FIXTURE = json.loads(
     (FIXTURE_DIRECTORY / "synthetic_form16_extraction.json").read_text(encoding="utf-8")
@@ -60,7 +63,7 @@ class InMemoryStorage:
         self.upload_paths.append(object_path)
 
     async def create_signed_url(self, object_path: str) -> str:
-        return f"https://test-project.supabase.co/storage/v1/object/sign/fintax-private/{object_path}?token=test"
+        return f"https://firebasestorage.googleapis.com/v0/b/fintax-cbad3.appspot.com/o"
 
     async def download(self, object_path: str) -> bytes:
         return self.objects[object_path]
@@ -111,8 +114,9 @@ async def api_client(
     app.dependency_overrides[get_db_session] = test_session
     test_settings = Settings(
         database_url="sqlite+aiosqlite://",
-        supabase_url=SUPABASE_URL,
-        supabase_jwt_secret=TEST_JWT_SECRET,
+        firebase_project_id=FIREBASE_PROJECT_ID,
+        firebase_api_key=TEST_JWT_SECRET,
+        firebase_test_mode=True,
         google_api_key=None,
     )
     storage = InMemoryStorage()
@@ -139,6 +143,22 @@ async def api_client(
         return schema.model_validate(FORM16_FIXTURE)
 
     monkeypatch.setattr(GeminiExtractor, "extract", mock_gemini_extract)
+    # Monkeypatch Firebase auth to accept test JWT tokens
+    import app.core.auth as auth_module
+    original_verify = auth_module._verify_firebase_token
+    def test_verify_firebase_token(token, settings):
+        try:
+            import jwt
+            decoded = jwt.decode(
+                token,
+                TEST_JWT_SECRET,
+                algorithms=['HS256'],
+                audience=f'https://{FIREBASE_PROJECT_ID}.firebaseapp.com/auth/v1',
+            )
+            return decoded, ['HS256']
+        except Exception:
+            return original_verify(token, settings)
+    auth_module._verify_firebase_token = test_verify_firebase_token
     app.dependency_overrides[get_settings] = lambda: test_settings
     app.dependency_overrides[get_storage] = lambda: storage  # type: ignore[assignment]
     app.dependency_overrides[get_extraction_job] = lambda: extraction_job
@@ -159,7 +179,7 @@ def make_token(user_id: UUID, **overrides: object) -> str:
         "sub": str(user_id),
         "aud": "authenticated",
         "role": "authenticated",
-        "iss": f"{SUPABASE_URL}/auth/v1",
+        "iss": f"https://{FIREBASE_PROJECT_ID}.firebaseapp.com/auth/v1",
         "exp": datetime.now(UTC) + timedelta(minutes=5),
         "email": f"{user_id.hex}@example.test",
     }
@@ -197,6 +217,12 @@ def profile_payload() -> dict[str, object]:
 async def test_auth_protects_profile_and_creates_profile_from_supabase_subject(
     api_client: AsyncClient,
 ) -> None:
+    health = await api_client.get("/api/v1/health")
+    assert health.status_code == 200
+    assert health.headers["x-content-type-options"] == "nosniff"
+    assert health.headers["x-frame-options"] == "DENY"
+    assert "default-src 'none'" in health.headers["content-security-policy"]
+
     unauthenticated = await api_client.get("/api/v1/me")
     assert unauthenticated.status_code == 401
 
@@ -208,6 +234,10 @@ async def test_auth_protects_profile_and_creates_profile_from_supabase_subject(
     assert response.status_code == 200
     assert response.headers["X-Request-ID"] == "test-request-42"
     assert response.json()["id"] == str(user_id)
+    metrics = await api_client.get("/api/v1/metrics/usage", headers=auth(make_token(user_id)))
+    assert metrics.status_code == 200
+    assert metrics.json()["process_scope"] == "single-process"
+    assert any(key.startswith("health_check:") for key in metrics.json()["request_counts"])
 
 
 @pytest.mark.asyncio
@@ -222,7 +252,7 @@ async def test_jwt_signature_issuer_audience_and_expiry_are_verified(
             "sub": str(user_id),
             "aud": "authenticated",
             "role": "authenticated",
-            "iss": f"{SUPABASE_URL}/auth/v1",
+            "iss": f"https://{FIREBASE_PROJECT_ID}.firebaseapp.com/auth/v1",
             "exp": datetime.now(UTC) + timedelta(minutes=5),
         },
         "wrong-test-secret-is-long-enough-for-testing",
@@ -256,7 +286,7 @@ async def test_asymmetric_supabase_jwks_signature_is_verified(
             "sub": str(user_id),
             "aud": "authenticated",
             "role": "authenticated",
-            "iss": f"{SUPABASE_URL}/auth/v1",
+            "iss": f"https://{FIREBASE_PROJECT_ID}.firebaseapp.com/auth/v1",
             "exp": datetime.now(UTC) + timedelta(minutes=5),
         },
         private_key,
@@ -278,19 +308,22 @@ async def test_documents_are_private_and_soft_deleted(api_client: AsyncClient) -
         files={
             "file": ("synthetic-form16.png", synthetic_png(), "image/png"),
         },
-        data={"document_type": "form16"},
+        data={"document_type": "form16", "auto_delete_after_30_days": "true"},
     )
     assert created.status_code == 202
     document_id = created.json()["id"]
     assert created.json()["status"] == "pending"
     assert created.json()["signed_url"].startswith("https://")
     assert "public" not in created.json()
+    assert created.json()["auto_delete_at"] is not None
+    assert "ABCDE1234F" not in created.json()["file_name"]
 
     async with app.state.test_session_factory() as session:
         document = await session.get(Document, UUID(document_id))
         assert document is not None
         assert document.storage_path.startswith(f"{owner_id}/")
         assert document.status == "extracted"
+        assert document.auto_delete_at is not None
         extraction = await session.execute(
             select(ExtractionResult).where(ExtractionResult.document_id == document.id)
         )
@@ -382,6 +415,7 @@ async def test_documents_are_private_and_soft_deleted(api_client: AsyncClient) -
     )
     assert confirmed.status_code == 200
     assert confirmed.json()["fields"]["employee_name"]["value"] == "Synthetic Employee"
+    assert confirmed.json()["fields"]["employee_pan"]["value"] == "AB*******F"
     assert confirmed.json()["profile"]["employment_type"] == "employee"
     confirmed_user = await api_client.get(
         "/api/v1/me",
@@ -393,6 +427,7 @@ async def test_documents_are_private_and_soft_deleted(api_client: AsyncClient) -
         assert saved_result is not None
         assert saved_result.confirmed_profile["consent_given"] is True
         assert saved_result.payload["employee_name"]["value"] == "Synthetic Employee"
+        assert saved_result.payload["employee_pan"]["value"] == "AB*******F"
 
     profile["salary_components"]["basic_salary"] = 12.5
     invalid_profile = await api_client.put(
@@ -474,6 +509,45 @@ async def test_manual_profile_requires_explicit_consent_and_persists(
         user = await session.get(User, user_id)
         assert user is not None
         assert user.confirmed_profile["other_income"] == "50000"
+
+
+@pytest.mark.asyncio
+async def test_delete_my_data_requires_confirmation_and_removes_local_records(
+    api_client: AsyncClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    async def skip_external_auth_delete(self: PrivacyService, user_id: UUID) -> None:
+        assert user_id
+
+    async def privacy_service(
+        session: AsyncSession = Depends(get_db_session),
+    ) -> AsyncIterator[PrivacyService]:
+        yield PrivacyService(
+            session,
+            Settings(
+                database_url="sqlite+aiosqlite://",
+                firebase_project_id=FIREBASE_PROJECT_ID,
+            ),
+            app.state.test_storage,  # type: ignore[arg-type]
+        )
+
+    monkeypatch.setattr(PrivacyService, "_delete_firebase_identity", skip_external_auth_delete)
+    app.dependency_overrides[get_privacy_service] = privacy_service
+    user_id = uuid4()
+    headers = auth(make_token(user_id))
+    rejected = await api_client.request("DELETE", "/api/v1/me/data", headers=headers, json={})
+    assert rejected.status_code == 422
+
+    deleted = await api_client.request(
+        "DELETE",
+        "/api/v1/me/data",
+        headers=headers,
+        json={"confirmation": "DELETE"},
+    )
+    assert deleted.status_code == 204
+    async with app.state.test_session_factory() as session:
+        assert await session.get(User, user_id) is None
+    app.dependency_overrides.pop(get_privacy_service)
 
 
 @pytest.mark.asyncio
