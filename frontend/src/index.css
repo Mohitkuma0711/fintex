@@ -2052,6 +2052,91 @@ a:focus-visible {
   font: inherit;
 }
 
+/* ── Upload overlay loader ── */
+.upload-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  background: color-mix(in oklch, var(--ink-950) 62%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.upload-overlay__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 2.5rem 3rem;
+  border-radius: var(--radius-token-xl);
+  background: var(--surface);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+  text-align: center;
+  max-width: 380px;
+  width: 90%;
+}
+
+.upload-overlay__spinner {
+  color: var(--brand);
+  animation: spin-loader 1s linear infinite;
+}
+
+@keyframes spin-loader {
+  to { transform: rotate(360deg); }
+}
+
+.upload-overlay__message {
+  margin: 0;
+  color: var(--text-primary);
+  font-family: var(--font-display-family);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.upload-overlay__progress {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.upload-overlay__progress small {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  min-width: 2.5rem;
+  text-align: right;
+}
+
+.upload-overlay__track {
+  flex: 1;
+  height: 6px;
+  border-radius: 99px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.upload-overlay__track span {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: var(--brand);
+  transition: width 150ms linear;
+}
+
+/* Upload button spinner */
+.upload-btn-spinner {
+  animation: spin-loader 1s linear infinite;
+}
+
+.upload-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 .upload-page,
 .review-page {
   min-height: 68vh;
@@ -3232,9 +3317,7 @@ a:focus-visible {
 .chat-main {
   display: flex;
   min-height: 620px;
-  max-height: min(78vh, 900px);
   flex-direction: column;
-  overflow: hidden;
 }
 
 .chat-toolbar {
@@ -3267,12 +3350,10 @@ a:focus-visible {
 
 .chat-transcript {
   display: flex;
-  flex: 1 1 auto;
   flex-direction: column;
   gap: 1rem;
-  overflow-y: auto;
+  overflow: visible;
   padding: clamp(1rem, 3vw, 1.5rem);
-  overscroll-behavior: contain;
 }
 
 .chat-welcome {

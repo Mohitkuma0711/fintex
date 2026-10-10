@@ -1,3 +1,4 @@
+import asyncio
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,8 +10,12 @@ from app.repositories.tax_computations import TaxComputationRepository
 from app.schemas.api import TaxSuggestionsResponse
 from app.schemas.suggestions import SuggestionResponse
 from app.schemas.tax import ConfirmedTaxpayerProfile
-from app.services.suggestions.engine import build_suggestion_drafts, savings_potential
-from app.services.suggestions.explainer import explain_suggestion
+from app.services.suggestions.engine import (
+    SuggestionDraft,
+    build_suggestion_drafts,
+    savings_potential,
+)
+from app.services.suggestions.explainer import SuggestionExplanationError, explain_suggestion
 from app.services.tax_engine.compare import compare_regimes
 from app.services.tax_engine.rules import RulesetVersion
 
@@ -41,9 +46,19 @@ class SuggestionService:
             result=baseline.model_dump(mode="json"),
         )
         drafts = build_suggestion_drafts(confirmed_profile, rules)
-        suggestions: list[SuggestionResponse] = []
+        explained_drafts: list[SuggestionDraft] = []
         for draft in drafts:
-            explained = await explain_suggestion(draft, self.settings)
+            try:
+                explained_drafts.append(
+                    await asyncio.wait_for(
+                        explain_suggestion(draft, self.settings),
+                        timeout=4,
+                    )
+                )
+            except (TimeoutError, SuggestionExplanationError):
+                explained_drafts.append(draft)
+        suggestions: list[SuggestionResponse] = []
+        for _draft, explained in zip(drafts, explained_drafts, strict=True):
             row = await self.suggestion_repository.save_or_update(
                 user_id=user.id,
                 tax_computation_id=computation.id,

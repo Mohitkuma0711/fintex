@@ -51,9 +51,10 @@ def is_official_source_host(host: str) -> bool:
 
 
 async def embed_text(text: str, settings: Settings) -> list[float]:
-    if settings.google_api_key is None:
+    api_key = settings.google_api_key or settings.gemini_api_key
+    if api_key is None:
         raise KnowledgeBaseUnavailable("Gemini embeddings are not configured.")
-    client = genai.Client(api_key=settings.google_api_key.get_secret_value())
+    client = genai.Client(api_key=api_key.get_secret_value())
     async with client.aio as async_client:
         response = await async_client.models.embed_content(
             model=settings.gemini_embedding_model,

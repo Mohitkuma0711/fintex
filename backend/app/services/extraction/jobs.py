@@ -10,7 +10,7 @@ from app.repositories.documents import DocumentRepository
 from app.services.extraction.errors import ExtractionError, ExtractionErrorCode
 from app.services.extraction.orchestrator import ExtractionOrchestrator
 from app.services.extraction.virus_scan import VirusScanner, scan_document
-from app.services.storage.firebase_storage import FirebaseStorage
+from app.services.storage.supabase_storage import SupabaseStorage
 
 logger = structlog.get_logger(__name__)
 
@@ -19,7 +19,7 @@ class ExtractionJob:
     def __init__(
         self,
         session_factory: async_sessionmaker[AsyncSession],
-        storage: FirebaseStorage,
+        storage: SupabaseStorage,
         orchestrator: ExtractionOrchestrator,
         virus_scanner: VirusScanner,
     ) -> None:

@@ -11,22 +11,19 @@ class Settings(BaseSettings):
     app_env: str = "development"
     api_v1_prefix: str = "/api/v1"
     database_url: str = "postgresql+asyncpg://fintax:fintax@localhost:5432/fintax"
-    firebase_project_id: str | None = None
-    firebase_service_account_path: str | None = None
-    firebase_api_key: str | None = None
-    firebase_auth_domain: str | None = None
-    firebase_storage_bucket: str | None = None
-    firebase_app_id: str | None = None
-    firebase_message_sender_id: str | None = None
-    firebase_measurement_id: str | None = None
-    storage_signed_url_ttl_seconds: int = 300
+    supabase_url: str | None = None
+    supabase_anon_key: SecretStr | None = None
+    supabase_jwt_secret: SecretStr | None = None
+    supabase_service_role_key: SecretStr | None = None
+    supabase_storage_bucket: str = "fintax-private"
+    storage_signed_url_ttl_seconds: int = 900
     max_upload_size_bytes: int = 10 * 1024 * 1024
-    storage_backend: str = "firebase"
+    storage_backend: str = "local"
     local_storage_dir: Path = Path(".local_storage")
     public_base_url: str = "http://localhost:8000"
     google_api_key: SecretStr | None = None
     gemini_api_key: SecretStr | None = None
-    firebase_test_mode: bool = False
+    supabase_test_mode: bool = False
     gemini_model: str = "gemini-2.5-flash"
     gemini_timeout_seconds: int = 45
     gemini_max_attempts: int = 3
@@ -46,13 +43,10 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore", case_sensitive=False)
 
     @field_validator(
-        "firebase_api_key",
-        "firebase_service_account_path",
-        "firebase_auth_domain",
-        "firebase_storage_bucket",
-        "firebase_app_id",
-        "firebase_message_sender_id",
-        "firebase_measurement_id",
+        "supabase_url",
+        "supabase_anon_key",
+        "supabase_jwt_secret",
+        "supabase_service_role_key",
         "google_api_key",
         "gemini_api_key",
         "tax_rules_file",
@@ -62,18 +56,25 @@ class Settings(BaseSettings):
     def blank_auth_values_are_unset(cls, value: object) -> object:
         return None if value == "" else value
 
-    @field_validator("firebase_api_key")
+    @field_validator("supabase_jwt_secret")
     @classmethod
-    def require_valid_firebase_api_key(cls, value: str | None) -> str | None:
-        if value is not None and len(value) < 10:
-            raise ValueError("Firebase API key must be at least 10 characters.")
+    def require_strong_legacy_jwt_secret(cls, value: SecretStr | None) -> SecretStr | None:
+        if value is not None and len(value.get_secret_value()) < 32:
+            raise ValueError("SUPABASE_JWT_SECRET must be at least 32 characters.")
         return value
 
     @field_validator("storage_signed_url_ttl_seconds")
     @classmethod
     def validate_signed_url_ttl(cls, value: int) -> int:
-        if not 60 <= value <= 900:
-            raise ValueError("Signed URL lifetime must be between 60 and 900 seconds.")
+        if not 60 <= value <= 3600:
+            raise ValueError("Signed URL lifetime must be between 60 and 3600 seconds.")
+        return value
+
+    @field_validator("supabase_storage_bucket")
+    @classmethod
+    def validate_storage_bucket_name(cls, value: str) -> str:
+        if not value or "/" in value or value.strip() != value:
+            raise ValueError("SUPABASE_STORAGE_BUCKET must be a non-empty bucket name.")
         return value
 
     @field_validator("max_upload_size_bytes")
@@ -87,8 +88,8 @@ class Settings(BaseSettings):
     @classmethod
     def validate_storage_backend(cls, value: str) -> str:
         normalized = value.lower()
-        if normalized not in {"firebase", "local"}:
-            raise ValueError("Storage backend must be 'firebase' or 'local'.")
+        if normalized not in {"supabase", "local"}:
+            raise ValueError("Storage backend must be 'supabase' or 'local'.")
         return normalized
 
     @field_validator("public_base_url")

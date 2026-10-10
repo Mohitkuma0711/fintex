@@ -108,8 +108,11 @@ def build_suggestion_drafts(
             ("80C_PPF", "80C"),
             ("80CCD(1B)", "80CCD(1B)"),
         )
+        if key in rules.suggestion_terms
     ]
     for key, section in (("80D", "80D"), ("80E", "80E"), ("24B", "24B")):
+        if key not in rules.suggestion_terms:
+            continue
         eligible_total = _eligible_expense(confirmed_profile, section)
         if eligible_total is None:
             continue
@@ -134,9 +137,13 @@ def build_suggestion_drafts(
             min(before.old_regime.total_tax, before.new_regime.total_tax)
             - min(after.old_regime.total_tax, after.new_regime.total_tax),
         )
-        if tax_saved <= ZERO:
-            continue
         terms: SuggestionTerms = rules.suggestion_terms[key]
+        saving_context = (
+            f" The current lowest-tax regime remains {before.recommended_regime}, "
+            "so this old-regime-only action does not reduce the recommended tax yet."
+            if tax_saved <= ZERO and before.recommended_regime == "new"
+            else ""
+        )
         drafts.append(
             SuggestionDraft(
                 key=key,
@@ -155,7 +162,7 @@ def build_suggestion_drafts(
                     f"from {min(before.old_regime.total_tax, before.new_regime.total_tax)} to "
                     f"{min(after.old_regime.total_tax, after.new_regime.total_tax)}. "
                     "Net benefit is tax saved only; investment returns, fees, and opportunity "
-                    "cost are not estimated."
+                    f"cost are not estimated.{saving_context}"
                 ),
                 explanation_source="template",
                 before=before,
@@ -163,7 +170,11 @@ def build_suggestion_drafts(
             )
         )
 
-    if profile.salary_components.hra_received > ZERO and profile.hra_inputs.rent_paid > ZERO:
+    if (
+        "HRA" in rules.suggestion_terms
+        and profile.salary_components.hra_received > ZERO
+        and profile.hra_inputs.rent_paid > ZERO
+    ):
         hra_terms = rules.suggestion_terms["HRA"]
         eligible_hra = [
             regime_name

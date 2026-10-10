@@ -228,6 +228,13 @@ export function SimulatorPage() {
               <span>{Number(result.tax_saved) < 0 ? 'Tax increase in this scenario' : 'Tax saved in this scenario'}</span>
               <strong>{formatINRExact(result.tax_saved)}</strong>
               {result.recommended_regime_changed && <p>The recommended regime changed after this input.</p>}
+              {Number(result.tax_saved) === 0 && !result.recommended_regime_changed && (
+                <p>
+                  No current saving: the new regime is still cheaper for this profile.
+                  This input may become useful if your verified old-regime deductions
+                  are large enough to change the comparison.
+                </p>
+              )}
             </div>
             <div className="simulator-traces">
               <TraceDetails steps={result.trace_before} title="Before" />

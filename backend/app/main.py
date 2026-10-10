@@ -11,7 +11,6 @@ from app.api.v1.router import router as v1_router
 from app.core.config import get_settings
 from app.core.database import engine
 from app.core.errors import register_exception_handlers
-from app.core.firebase import initialize_firebase
 from app.core.logging import configure_logging
 from app.core.middleware import (
     RequestIdMiddleware,
@@ -51,11 +50,6 @@ if settings.sentry_dsn:
 
 @asynccontextmanager
 async def lifespan(_application: FastAPI) -> AsyncGenerator[None, None]:
-    if not settings.firebase_test_mode:
-        try:
-            initialize_firebase(settings)
-        except Exception as error:
-            logger.warning("firebase_initialization_failed", error_type=type(error).__name__)
     yield
     await engine.dispose()
 

@@ -17,7 +17,7 @@ from app.schemas.extraction import (
     SalarySlipExtraction,
 )
 from app.services.extraction.errors import ExtractionError
-from app.services.storage.firebase_storage import FirebaseStorage
+from app.services.storage.supabase_storage import SupabaseStorage
 
 _FILE_TYPES = {
     ".pdf": ("application/pdf", "pdf"),
@@ -45,7 +45,7 @@ def detect_document_type(content: bytes) -> tuple[str, str]:
 
 
 class DocumentService:
-    def __init__(self, session: AsyncSession, settings: Settings, storage: FirebaseStorage) -> None:
+    def __init__(self, session: AsyncSession, settings: Settings, storage: SupabaseStorage) -> None:
         self.repository = DocumentRepository(session)
         self.settings = settings
         self.storage = storage
@@ -99,7 +99,7 @@ class DocumentService:
             )
 
         document_id = uuid4()
-        object_path = FirebaseStorage.object_path(user.id, document_id, extension)
+        object_path = SupabaseStorage.object_path(user.id, document_id, extension)
         await self.storage.upload(object_path, content, detected_content_type)
         try:
             signed_url = await self.storage.create_signed_url(object_path)

@@ -14,13 +14,16 @@ import {
 import { formatINRExact } from '../lib/formatters'
 
 const suggestedQuestions = [
+  'Show my verified tax-saving opportunities and estimated savings.',
   'Why is the new regime better for me?',
   'Can you explain a step in my latest calculation?',
   'What if I contribute more to NPS?',
 ]
 
-function CitationChips({ citations }: { citations: ChatCitation[] }) {
+function CitationChips({ citations, content }: { citations: ChatCitation[]; content: string }) {
   if (citations.length === 0) {
+    const isGreeting = /^(hi|hello|hey|hiya|good morning|good afternoon|good evening)[!.]?/i.test(content.trim())
+    if (isGreeting) return null
     return <p className="chat-no-citation">No official source was retrieved; this answer is intentionally unsure.</p>
   }
   return (
@@ -43,23 +46,23 @@ function MessageBubble({ message, isThinking }: { message: ChatMessage; isThinki
   return (
     <motion.article
       animate={{ opacity: 1, y: 0 }}
-      aria-label={isAssistant ? 'FinTax AI response' : 'Your message'}
+      aria-label={isAssistant ? 'CA Advisor response' : 'Your message'}
       className={`chat-message${isAssistant ? ' chat-message--assistant' : ' chat-message--user'}`}
       initial={{ opacity: 0, y: 8 }}
       transition={{ duration: reducedMotion ? 0 : 0.22 }}
     >
       <div className="chat-message__identity">
         <span aria-hidden="true">{isAssistant ? <ShieldCheck size={15} /> : 'You'}</span>
-        <strong>{isAssistant ? 'FinTax AI' : 'You'}</strong>
+        <strong>{isAssistant ? 'CA Advisor' : 'You'}</strong>
       </div>
       <div className="chat-message__content">
         {message.content ? <p>{message.content}</p> : isThinking ? (
-          <span aria-label="FinTax AI is thinking" className="chat-typing" role="status">
+          <span aria-label="CA Advisor is thinking" className="chat-typing" role="status">
             <i /><i /><i />
           </span>
         ) : null}
       </div>
-      {isAssistant && message.content && <CitationChips citations={message.citations} />}
+      {isAssistant && message.content && <CitationChips citations={message.citations} content={message.content} />}
     </motion.article>
   )
 }
@@ -277,7 +280,7 @@ export function ChatPage() {
         <div>
           <p className="eyebrow">EXPLAIN · OFFICIAL SOURCES</p>
           <h1>Good questions. <span>Grounded answers.</span></h1>
-          <p>Answers use official references and your saved calculation tools. If evidence is missing, FinTax AI will say so.</p>
+          <p>CA Advisor uses official references and your saved calculation tools. If evidence is missing, it will say so.</p>
         </div>
         <button className="button chat-new-button" onClick={startNewConversation} type="button">
           <Plus aria-hidden="true" size={16} /> New conversation
@@ -361,7 +364,7 @@ export function ChatPage() {
         </main>
         <ContextPanel />
       </div>
-      <p className="chat-disclaimer">FinTax AI provides guidance, not professional tax advice. It will not guarantee legal outcomes or investment returns.</p>
+      <p className="chat-disclaimer">CA Advisor provides guidance, not professional tax advice. It will not guarantee legal outcomes or investment returns.</p>
     </section>
   )
 }

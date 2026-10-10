@@ -1,0 +1,1436 @@
+{
+  "financial_year": "2025-26",
+  "assessment_year": "2026-27",
+  "governing_act": "Income-tax Act, 1961",
+  "built_on": "2026-10-10",
+  "schema_version": "1.0",
+  "note": "Complete FY 2025-26 ruleset. Values come only from official Income Tax Department pages opened on 2026-10-10. Rules with verified=false or status=conflicting must keep the calculation/suggestion gate closed for features that need them.",
+  "rules": [
+    {
+      "rule_key": "meta.governing_act",
+      "value": "Income-tax Act, 1961",
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/section-1-1",
+      "source_title": "Income-tax Act, 2025 s.1 Short title, extent and commencement",
+      "section_ref": "s.1(3): Act 2025 comes into force 1 April 2026; FY 2025-26 therefore stays under the 1961 Act",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "CBDT press release 01-Apr-2026 also confirms the 2025 Act replaces the 1961 Act from 1 Apr 2026. The e-Filing page (S1) states AY 2026-27 returns are as per the Income Tax Act, 1961.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "new_regime.slabs.all_ages",
+      "value": [
+        {
+          "from": 0,
+          "to": 400000,
+          "rate": 0.0,
+          "cumulative_tax_at_from": 0
+        },
+        {
+          "from": 400000,
+          "to": 800000,
+          "rate": 0.05,
+          "cumulative_tax_at_from": 0
+        },
+        {
+          "from": 800000,
+          "to": 1200000,
+          "rate": 0.1,
+          "cumulative_tax_at_from": 20000
+        },
+        {
+          "from": 1200000,
+          "to": 1600000,
+          "rate": 0.15,
+          "cumulative_tax_at_from": 60000
+        },
+        {
+          "from": 1600000,
+          "to": 2000000,
+          "rate": 0.2,
+          "cumulative_tax_at_from": 120000
+        },
+        {
+          "from": 2000000,
+          "to": 2400000,
+          "rate": 0.25,
+          "cumulative_tax_at_from": 200000
+        },
+        {
+          "from": 2400000,
+          "to": null,
+          "rate": 0.3,
+          "cumulative_tax_at_from": 300000
+        }
+      ],
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+      "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "Slabs identical for every age band under the new regime. S2 table agrees.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.slabs.below_60",
+      "value": [
+        {
+          "from": 0,
+          "to": 250000,
+          "rate": 0.0,
+          "cumulative_tax_at_from": 0
+        },
+        {
+          "from": 250000,
+          "to": 500000,
+          "rate": 0.05,
+          "cumulative_tax_at_from": 0
+        },
+        {
+          "from": 500000,
+          "to": 1000000,
+          "rate": 0.2,
+          "cumulative_tax_at_from": 12500
+        },
+        {
+          "from": 1000000,
+          "to": null,
+          "rate": 0.3,
+          "cumulative_tax_at_from": 112500
+        }
+      ],
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+      "section_ref": "Tax Slabs for AY 2026-27, old regime, individual below 60",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.slabs.age_60_to_79",
+      "value": [
+        {
+          "from": 0,
+          "to": 300000,
+          "rate": 0.0,
+          "cumulative_tax_at_from": 0
+        },
+        {
+          "from": 300000,
+          "to": 500000,
+          "rate": 0.05,
+          "cumulative_tax_at_from": 0
+        },
+        {
+          "from": 500000,
+          "to": 1000000,
+          "rate": 0.2,
+          "cumulative_tax_at_from": 10000
+        },
+        {
+          "from": 1000000,
+          "to": null,
+          "rate": 0.3,
+          "cumulative_tax_at_from": 110000
+        }
+      ],
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+      "section_ref": "Tax Slabs for AY 2026-27, old regime, age 60 or more but below 80",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.slabs.age_80_plus",
+      "value": [
+        {
+          "from": 0,
+          "to": 500000,
+          "rate": 0.0,
+          "cumulative_tax_at_from": 0
+        },
+        {
+          "from": 500000,
+          "to": 1000000,
+          "rate": 0.2,
+          "cumulative_tax_at_from": 0
+        },
+        {
+          "from": 1000000,
+          "to": null,
+          "rate": 0.3,
+          "cumulative_tax_at_from": 100000
+        }
+      ],
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+      "section_ref": "Tax Slabs for AY 2026-27, old regime, age 80 or more",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.slabs.non_resident_any_age",
+      "value": [
+        {
+          "from": 0,
+          "to": 250000,
+          "rate": 0.0,
+          "cumulative_tax_at_from": 0
+        },
+        {
+          "from": 250000,
+          "to": 500000,
+          "rate": 0.05,
+          "cumulative_tax_at_from": 0
+        },
+        {
+          "from": 500000,
+          "to": 1000000,
+          "rate": 0.2,
+          "cumulative_tax_at_from": 12500
+        },
+        {
+          "from": 1000000,
+          "to": null,
+          "rate": 0.3,
+          "cumulative_tax_at_from": 112500
+        }
+      ],
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+      "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+      "section_ref": "Tax rates: non-resident individual/HUF table (same rates irrespective of age)",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "meta.age_band_definition",
+      "value": {
+        "senior": "60 years or more at any time during the previous year",
+        "super_senior": "80 years or more at any time during the previous year"
+      },
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+      "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+      "section_ref": "Tax rates: classification of individuals for slab purposes",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "meta.default_regime",
+      "value": "new regime u/s 115BAC(1A) is default; opt out under 115BAC(6)",
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+      "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+      "section_ref": "Tax rates: New tax regime rate for Individual, HUFs, AOP, BOI and AJP",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "Non-business: option exercised each year with the return. Business/profession: Form 10-IEA on or before due date u/s 139(1) (S1).",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.standard_deduction.amount",
+      "value": 50000,
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/section-16-228",
+      "source_title": "Income-tax Act, 1961 s.16 Deductions from salaries (current text)",
+      "section_ref": "s.16(ia): fifty thousand rupees or salary, whichever is less",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "new_regime.standard_deduction.amount",
+      "value": 75000,
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/section-16-228",
+      "source_title": "Income-tax Act, 1961 s.16 Deductions from salaries (current text)",
+      "section_ref": "s.16(ia) proviso: 75,000 where tax computed under s.115BAC(1A) cl.(ii) or (iii)",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "Lower of 75,000 and salary.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.entertainment_allowance.limit",
+      "value": {
+        "applies_to": "government employees only",
+        "limit": "lower of 1/5 of salary or 5,000"
+      },
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/section-16-228",
+      "source_title": "Income-tax Act, 1961 s.16 Deductions from salaries (current text)",
+      "section_ref": "s.16(ii)",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.professional_tax.deduction",
+      "value": "actual tax on employment paid (Art. 276 of Constitution)",
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/section-16-228",
+      "source_title": "Income-tax Act, 1961 s.16 Deductions from salaries (current text)",
+      "section_ref": "s.16(iii)",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "new_regime.entertainment_allowance_and_professional_tax_allowed",
+      "value": false,
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+      "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+      "section_ref": "Conditions list items (g) s.16(ii) and (h) s.16(iii) cannot be claimed under new regime",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "new_regime.rebate_87a.total_income_limit",
+      "value": 1200000,
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/section-87a-30",
+      "source_title": "Income-tax Act, 1961 s.87A Rebate of income-tax (current text)",
+      "section_ref": "s.87A first proviso cl.(a): total income not exceeding 12 lakh, chargeable u/s 115BAC(1A)",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "Corroborated by S1 (Rebate limit 60,000, taxable income not exceeding 12,00,000).",
+      "conflict_note": "S2 'Tax rates' page note (b) for AY 2026-27 prints 7,00,000 next to 60,000; that is internally inconsistent (stale text) and contradicts the statute text (S4) and S1. Statute text used. Confirm."
+    },
+    {
+      "rule_key": "new_regime.rebate_87a.max_amount",
+      "value": 60000,
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/section-87a-30",
+      "source_title": "Income-tax Act, 1961 s.87A Rebate of income-tax (current text)",
+      "section_ref": "s.87A first proviso cl.(a): lower of 100% of income-tax or sixty thousand rupees",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "Rebate cannot exceed the tax payable under s.115BAC(1A) rates (S2 note).",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "new_regime.rebate_87a.marginal_relief",
+      "value": "if total income > 12,00,000 and tax > (income - 12,00,000): tax payable = income - 12,00,000 (rebate = excess of tax over that amount)",
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/section-87a-30",
+      "source_title": "Income-tax Act, 1961 s.87A Rebate of income-tax (current text)",
+      "section_ref": "s.87A first proviso cl.(b)",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.rebate_87a.total_income_limit",
+      "value": 500000,
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/section-87a-30",
+      "source_title": "Income-tax Act, 1961 s.87A Rebate of income-tax (current text)",
+      "section_ref": "s.87A main para",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "S1 and S2 agree.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.rebate_87a.max_amount",
+      "value": 12500,
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/section-87a-30",
+      "source_title": "Income-tax Act, 1961 s.87A Rebate of income-tax (current text)",
+      "section_ref": "s.87A main para: 100% of tax or 12,500, whichever is less",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "rebate_87a.eligibility",
+      "value": "resident individual only; rebate deducted from tax before cess",
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/section-87a-30",
+      "source_title": "Income-tax Act, 1961 s.87A Rebate of income-tax (current text)",
+      "section_ref": "s.87A main para ('individual resident in India'); S2 note: deductible before calculating cess",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "No marginal relief on the old-regime 5 lakh limit appears in the s.87A text.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "new_regime.surcharge.tiers",
+      "value": [
+        {
+          "income_exceeds": 5000000,
+          "rate": 0.1
+        },
+        {
+          "income_exceeds": 10000000,
+          "rate": 0.15
+        },
+        {
+          "income_exceeds": 20000000,
+          "rate": 0.25
+        }
+      ],
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+      "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+      "section_ref": "Tax rates: surcharge table for new tax regime (max 25%)",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "S1 table agrees (25% above 2 crore, no higher tier).",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.surcharge.tiers",
+      "value": [
+        {
+          "income_exceeds": 5000000,
+          "rate": 0.1
+        },
+        {
+          "income_exceeds": 10000000,
+          "rate": 0.15
+        },
+        {
+          "income_exceeds": 20000000,
+          "rate": 0.25
+        },
+        {
+          "income_exceeds": 50000000,
+          "rate": 0.37
+        }
+      ],
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+      "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+      "section_ref": "Tax rates: surcharge table AY 2026-27 (individuals, old regime)",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "surcharge.special_rate_income_cap",
+      "value": 0.15,
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+      "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+      "section_ref": "Tax rates: Note 1-2 and new-regime note: surcharge on tax on s.111A, s.112, s.112A, s.115AD gains and on dividend capped at 15%",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "surcharge.marginal_relief",
+      "value": "income-tax + surcharge must not exceed tax (incl. surcharge) at the threshold income + the amount by which income exceeds that threshold; thresholds 50L, 1Cr, 2Cr (new regime) and also 5Cr (old regime)",
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+      "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+      "section_ref": "Tax rates: marginal relief paragraphs (a)-(d)",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "cess.health_and_education.rate",
+      "value": 0.04,
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+      "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+      "section_ref": "Tax rates: 4% on income-tax plus surcharge",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "S1 agrees, both regimes.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.sec80c.limit",
+      "value": 150000,
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+      "section_ref": "Deductions (old regime): ss.80C, 80CCC, 80CCD(1) combined limit 1,50,000",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.sec80c.eligible_items_examples",
+      "value": [
+        "life insurance premium",
+        "provident fund",
+        "subscription to certain equity shares",
+        "tuition fees",
+        "national savings certificate",
+        "housing loan principal",
+        "other items"
+      ],
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+      "section_ref": "Deductions (old regime): s.80C list (illustrative, not exhaustive)",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "suggestions"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.sec80ccd1.limit_pct",
+      "value": {
+        "employee": "10% of salary",
+        "others": "20% of gross total income",
+        "overall_cap": "within 1,50,000 combined with 80C/80CCC"
+      },
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/section-80ccd-24",
+      "source_title": "Income-tax Act, 1961 s.80CCD Pension scheme contribution",
+      "section_ref": "s.80CCD(1)(a),(b); salary includes DA if terms so provide, excludes other allowances",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "Combined cap of 1,50,000 stated on S1.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.sec80ccd1b.limit",
+      "value": 50000,
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/section-80ccd-24",
+      "source_title": "Income-tax Act, 1961 s.80CCD Pension scheme contribution",
+      "section_ref": "s.80CCD(1B): not exceeding fifty thousand rupees, over and above 80CCD(1)",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "No deduction under 1B for amount already claimed under 80CCD(1). S1 agrees.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.sec80ccd2.limit_pct_of_salary",
+      "value": {
+        "central_or_state_government_employer": 0.14,
+        "any_other_employer": 0.1
+      },
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/section-80ccd-24",
+      "source_title": "Income-tax Act, 1961 s.80CCD Pension scheme contribution",
+      "section_ref": "s.80CCD(2)(a),(b)",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "new_regime.sec80ccd2.limit_pct_of_salary",
+      "value": 0.14,
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/section-80ccd-24",
+      "source_title": "Income-tax Act, 1961 s.80CCD Pension scheme contribution",
+      "section_ref": "s.80CCD(2) proviso: where total income is chargeable under s.115BAC(1A), 14% applies for all employers",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation",
+        "suggestions"
+      ],
+      "notes": "S1 also states 14% of salary for all employers under the new regime.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.sec80d.limits",
+      "value": {
+        "self_spouse_children": {
+          "normal": 25000,
+          "senior_citizen": 50000
+        },
+        "parents": {
+          "normal": 25000,
+          "senior_citizen": 50000
+        },
+        "preventive_health_checkup_within_limit": 5000,
+        "medical_expenditure_if_no_insurance_senior_self_or_parents": 50000
+      },
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/section-80d-60",
+      "source_title": "Income-tax Act, 1961 s.80D Health insurance premia",
+      "section_ref": "s.80D(2)(a),(b), (2A), (4); amounts per S1 s.80D table",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "Both limbs together can reach 100000 when self and parents are both senior citizens.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.sec80dd.limits",
+      "value": {
+        "disability": 75000,
+        "severe_disability_80pct_or_more": 125000
+      },
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+      "section_ref": "s.80DD",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.sec80ddb.limits",
+      "value": {
+        "normal": 40000,
+        "senior_citizen": 100000
+      },
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+      "section_ref": "s.80DDB",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.sec80e.limit",
+      "value": "no monetary cap: total interest paid on higher-education loan",
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+      "section_ref": "s.80E",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.sec80ee.limit",
+      "value": {
+        "cap": 50000,
+        "loan_sanctioned_between": [
+          "2016-04-01",
+          "2017-03-31"
+        ]
+      },
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+      "section_ref": "s.80EE",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "Legacy loans only.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.sec80eea.limit",
+      "value": {
+        "cap": 150000,
+        "loan_sanctioned_between": [
+          "2019-04-01",
+          "2022-03-31"
+        ],
+        "conditions": "first-time home buyer; only if s.24(b) limit exhausted; not with 80EE"
+      },
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+      "section_ref": "s.80EEA",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "Legacy loans only. No new loan can qualify for FY 2025-26 (sanction window closed).",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.sec80eeb.limit",
+      "value": {
+        "cap": 150000,
+        "loan_sanctioned_between": [
+          "2019-04-01",
+          "2023-03-31"
+        ]
+      },
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+      "section_ref": "s.80EEB electric vehicle loan interest",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "Legacy loans only.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.sec80g.cash_donation_limit",
+      "value": 2000,
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+      "section_ref": "s.80G note: no deduction for cash donations above 2,000",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.sec80gg.limits",
+      "value": {
+        "monthly_cap": 5000,
+        "pct_of_total_income": 0.25,
+        "rent_minus_pct_of_total_income": 0.1,
+        "form": "Form 10BA acknowledgement number mandatory",
+        "allowed_to": "self-employed or those with no HRA in salary; least of the three"
+      },
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+      "section_ref": "s.80GG",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.sec80tta.limit",
+      "value": 10000,
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+      "section_ref": "s.80TTA savings-account interest, non-senior citizens",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.sec80ttb.limit",
+      "value": 50000,
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+      "section_ref": "s.80TTB deposit interest, resident senior citizens",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.sec80u.limits",
+      "value": {
+        "disability": 75000,
+        "severe_disability_80pct_or_more": 125000
+      },
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+      "section_ref": "s.80U",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.sec24b.limits",
+      "value": {
+        "self_occupied": {
+          "loan_on_or_after_1999-04-01_purchase_or_construction": 200000,
+          "repairs": 30000,
+          "loan_before_1999-04-01": 30000
+        },
+        "let_out": "actual interest, no cap",
+        "house_property_loss_setoff_against_other_heads_cap": 200000,
+        "carry_forward_assessment_years": 8
+      },
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+      "section_ref": "s.24(b) table (old regime)",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "new_regime.not_allowed_exemptions_and_deductions",
+      "value": [
+        "s.10(5) LTC",
+        "s.10(13A) HRA",
+        "s.10(14) allowances other than prescribed",
+        "s.10(17) MP/MLA allowances",
+        "s.10(32) minor income",
+        "s.10AA SEZ",
+        "s.16(ii) entertainment allowance",
+        "s.16(iii) professional tax",
+        "s.24(b) housing loan interest (see conflicting rule for let-out)",
+        "s.32(1)(iia)",
+        "s.32AD",
+        "s.33AB",
+        "s.33ABA",
+        "s.35(1)(ii)",
+        "s.35(1)(iia)",
+        "s.35(1)(iii)",
+        "s.35(2AA)",
+        "s.35AD",
+        "s.35CCC",
+        "Chapter VI-A deductions other than 80JJAA, 80CCD(2) (and 80CCH(2)), and 80LA for IFSC units",
+        "set-off of house property loss against other heads; carry-forward of such loss"
+      ],
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+      "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+      "section_ref": "Tax rates: 'Conditions to be satisfied' items (a)-(t) and following paragraph",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation",
+        "suggestions"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "new_regime.allowed_deductions",
+      "value": [
+        "standard deduction s.16(ia) 75,000",
+        "employer NPS s.80CCD(2) up to 14% of salary",
+        "s.80CCH(2) Agniveer corpus (government contribution)"
+      ],
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+      "section_ref": "Deductions (A): available to a taxpayer opting for the new regime u/s 115BAC",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation",
+        "suggestions"
+      ],
+      "notes": "S1 also lists 80CCH Agniveer deductions; 80JJAA and 80LA(IFSC) per S2 are outside typical salaried scope.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "new_regime.sec24b.let_out_interest",
+      "value": null,
+      "status": "conflicting",
+      "verified": false,
+      "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+      "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+      "section_ref": "S1 section A.1 vs S2 conditions list item (i)",
+      "effective_from": null,
+      "effective_to": null,
+      "effective_date_basis": null,
+      "verified_on": null,
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "S1 (e-Filing page) lists s.24(b) interest for LET-OUT property as allowed under the new regime with loss set-off barred. S2 (tax-rates page) lists 's.24(b)' without a let-out exception. Two official sources differ. Needs owner/CA decision. Until resolved: treat new regime as allowing NO s.24(b) interest for self-occupied property (both pages agree) and block let-out claims.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "hra.exemption_formula",
+      "value": "least of (a) actual HRA received, (b) rent paid minus one-tenth of salary, (c) 50% or 40% of salary",
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/rule-2a-1",
+      "source_title": "Income-tax Rules, 1962 r.2A Limits for the purposes of s.10(13A)",
+      "section_ref": "r.2A(a),(b),(c)",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "Also requires rent actually paid on accommodation occupied (official CBDT circular page for s.10(13A)).",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "hra.metro_percentage",
+      "value": {
+        "Mumbai": 0.5,
+        "Kolkata": 0.5,
+        "Delhi": 0.5,
+        "Chennai": 0.5,
+        "all_other_places": 0.4
+      },
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/rule-2a-1",
+      "source_title": "Income-tax Rules, 1962 r.2A Limits for the purposes of s.10(13A)",
+      "section_ref": "r.2A(c)(i),(ii): Bombay, Calcutta, Delhi, Madras = one-half; any other place = two-fifths",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "Rule 2A text for FY 2025-26 names only these four. The 8-city list quoted by non-official sites relates to rules for tax year 2026-27 and is NOT used.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "hra.relevant_period",
+      "value": "period during which the accommodation was occupied in the previous year",
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/rule-2a-1",
+      "source_title": "Income-tax Rules, 1962 r.2A Limits for the purposes of s.10(13A)",
+      "section_ref": "r.2A Explanation (ii)",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "hra.available_regime",
+      "value": "old regime only (s.10(13A) is in the new-regime disallowed list)",
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+      "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+      "section_ref": "Conditions list item (b) s.10(13A)",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation",
+        "suggestions"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "hra.salary_definition",
+      "value": null,
+      "status": "unverified",
+      "verified": false,
+      "source_url": "https://www.incometaxindia.gov.in/w/rule-2a-1",
+      "source_title": "Income-tax Rules, 1962 r.2A Limits for the purposes of s.10(13A)",
+      "section_ref": "r.2A Explanation (i): salary per r.2(h) of Part A, Fourth Schedule",
+      "effective_from": null,
+      "effective_to": null,
+      "effective_date_basis": null,
+      "verified_on": null,
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "Rule 2A defers to r.2(h) of Part A of the Fourth Schedule for 'salary'. That rule was not opened in this session, so the exact components (basic, DA only if terms of employment so provide, commission on fixed % turnover) are not verified from an official page.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "hra.landlord_pan_requirement",
+      "value": null,
+      "status": "unverified",
+      "verified": false,
+      "source_url": null,
+      "source_title": null,
+      "section_ref": null,
+      "effective_from": null,
+      "effective_to": null,
+      "effective_date_basis": null,
+      "verified_on": null,
+      "required_for": [
+        "suggestions"
+      ],
+      "notes": "Annual rent threshold above which landlord PAN is needed was not found on an official page opened in this session.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "capital_gains.sec111a.rate",
+      "value": 0.2,
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/determination-of-tax-in-certain-special-cases%E2%80%8B",
+      "source_title": "Income Tax Dept: Determination of tax in certain special cases (as amended by Finance Act, 2026)",
+      "section_ref": "s.111A short-term capital gains (STT paid)",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "capital_gains.sec112a.rate",
+      "value": 0.125,
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/determination-of-tax-in-certain-special-cases%E2%80%8B",
+      "source_title": "Income Tax Dept: Determination of tax in certain special cases (as amended by Finance Act, 2026)",
+      "section_ref": "s.112A long-term capital gains",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "Tax calculated on gains exceeding 1.25 lakh.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "capital_gains.sec112a.exemption_limit",
+      "value": 125000,
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/determination-of-tax-in-certain-special-cases%E2%80%8B",
+      "source_title": "Income Tax Dept: Determination of tax in certain special cases (as amended by Finance Act, 2026)",
+      "section_ref": "s.112A note: tax on capital gains exceeding Rs. 1.25 lakh",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "capital_gains.sec112.rate",
+      "value": 0.125,
+      "status": "verified",
+      "verified": true,
+      "source_url": "https://www.incometaxindia.gov.in/w/determination-of-tax-in-certain-special-cases%E2%80%8B",
+      "source_title": "Income Tax Dept: Determination of tax in certain special cases (as amended by Finance Act, 2026)",
+      "section_ref": "s.112 long-term capital gains (other assets)",
+      "effective_from": "2025-04-01",
+      "effective_to": "2026-03-31",
+      "effective_date_basis": "FY 2025-26 / AY 2026-27 label on the cited official page",
+      "verified_on": "2026-10-10",
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "Per this page. Holding-period tests and property grandfathering are not verified here.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "capital_gains.holding_periods",
+      "value": null,
+      "status": "unverified",
+      "verified": false,
+      "source_url": null,
+      "source_title": null,
+      "section_ref": null,
+      "effective_from": null,
+      "effective_to": null,
+      "effective_date_basis": null,
+      "verified_on": null,
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "12/24-month holding-period thresholds were not read from an official page in this session.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "rebate_87a.applicable_to_special_rate_gains",
+      "value": null,
+      "status": "unverified",
+      "verified": false,
+      "source_url": null,
+      "source_title": null,
+      "section_ref": null,
+      "effective_from": null,
+      "effective_to": null,
+      "effective_date_basis": null,
+      "verified_on": null,
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "Whether the 87A rebate can be set against tax on s.111A/s.112A gains was only seen on non-official sites. Not verified.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.sec80e.deduction_period_years",
+      "value": null,
+      "status": "unverified",
+      "verified": false,
+      "source_url": null,
+      "source_title": null,
+      "section_ref": null,
+      "effective_from": null,
+      "effective_to": null,
+      "effective_date_basis": null,
+      "verified_on": null,
+      "required_for": [
+        "suggestions"
+      ],
+      "notes": "Maximum years of 80E deduction not on the official pages opened.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "old_regime.sec80g.qualifying_limit_and_category_rates",
+      "value": null,
+      "status": "unverified",
+      "verified": false,
+      "source_url": null,
+      "source_title": null,
+      "section_ref": null,
+      "effective_from": null,
+      "effective_to": null,
+      "effective_date_basis": null,
+      "verified_on": null,
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "S1 text lost the 100%/50% category tables; the 10% adjusted-GTI qualifying limit was not on an opened official page.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "family_pension.deduction",
+      "value": null,
+      "status": "unverified",
+      "verified": false,
+      "source_url": null,
+      "source_title": null,
+      "section_ref": null,
+      "effective_from": null,
+      "effective_to": null,
+      "effective_date_basis": null,
+      "verified_on": null,
+      "required_for": [
+        "calculation"
+      ],
+      "notes": "s.57(iia) family-pension deduction amounts (new vs old regime) seen only on non-official pages.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "interest_and_fee.sec234a_234b_234c_234f",
+      "value": null,
+      "status": "unverified",
+      "verified": false,
+      "source_url": null,
+      "source_title": null,
+      "section_ref": null,
+      "effective_from": null,
+      "effective_to": null,
+      "effective_date_basis": null,
+      "verified_on": null,
+      "required_for": [],
+      "notes": "Interest/fee rates used by late-filing mock case were not looked up.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "suggestion_meta.lock_in_and_liquidity",
+      "value": null,
+      "status": "unverified",
+      "verified": false,
+      "source_url": null,
+      "source_title": null,
+      "section_ref": null,
+      "effective_from": null,
+      "effective_to": null,
+      "effective_date_basis": null,
+      "verified_on": null,
+      "required_for": [
+        "suggestions"
+      ],
+      "notes": "Lock-in/liquidity terms (PPF, ELSS, NPS, tax-saver FD) are product terms issued by other regulators; no allowed-domain source was opened. Recommend moving them to a separate catalogue with its own sources and keeping them out of the tax-rule gate.",
+      "conflict_note": null
+    },
+    {
+      "rule_key": "meta.section_mapping_1961_to_2025",
+      "value": null,
+      "status": "unverified",
+      "verified": false,
+      "source_url": null,
+      "source_title": null,
+      "section_ref": null,
+      "effective_from": null,
+      "effective_to": null,
+      "effective_date_basis": null,
+      "verified_on": null,
+      "required_for": [],
+      "notes": "Official 1961-to-2025 correspondence table not opened; not needed for FY 2025-26 calculations.",
+      "conflict_note": null
+    }
+  ]
+}

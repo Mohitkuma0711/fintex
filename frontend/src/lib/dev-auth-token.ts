@@ -1,4 +1,4 @@
-const TEST_SECRET = 'test-secret'
+const TEST_SECRET = 'super-secret-jwt-token-with-at-least-32-chars-long'
 const TOKEN_TTL_SECONDS = 3600
 
 function base64UrlEncode(bytes: Uint8Array): string {
@@ -10,7 +10,8 @@ function base64UrlEncode(bytes: Uint8Array): string {
 export async function mintDevAuthToken(uid: string): Promise<string> {
   const encoder = new TextEncoder()
   const now = Math.floor(Date.now() / 1000)
-  const issuer = `https://${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com/auth/v1`
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://demo.supabase.co'
+  const issuer = `${supabaseUrl.replace(/\/+$/, '')}/auth/v1`
   const header = base64UrlEncode(
     encoder.encode(JSON.stringify({ alg: 'HS256', typ: 'JWT' })),
   )

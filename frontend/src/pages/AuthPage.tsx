@@ -60,12 +60,12 @@ export function AuthPage() {
       <div className="auth-card">
         <div className="auth-card__mark" aria-hidden="true">
           <ShieldCheck size={28} />
-          <span>Firebase secured</span>
+          <span>Supabase secured</span>
         </div>
         <p className="eyebrow">Private tax workspace</p>
         <h1>{mode === 'sign-in' ? 'Sign in to FinTax AI' : 'Create your FinTax AI account'}</h1>
         <p className="auth-card__intro">
-          Your Firebase identity is used for API access and private Firestore profile records.
+          Your account is secured by Supabase. Your tax documents stay private and encrypted.
         </p>
 
         <form className="auth-form" onSubmit={handleSubmit}>

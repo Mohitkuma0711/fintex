@@ -1,189 +1,1176 @@
 {
   "$schema": "./ruleset.schema.json",
   "schema_version": 1,
-  "act": "Income-tax Act, 2025",
+  "act": "Income-tax Act, 1961",
   "versions": [
     {
-      "version": "TODO: assign ruleset version",
-      "financial_year": "TODO: assign financial year",
-      "effective_from": null,
-      "suggestion_terms": {
-        "80C_ELSS": { "title": "ELSS investment", "lock_in_period": null, "liquidity_note": null, "status": "TODO", "source_url": null, "effective_from": null },
-        "80C_PPF": { "title": "PPF investment", "lock_in_period": null, "liquidity_note": null, "status": "TODO", "source_url": null, "effective_from": null },
-        "80D": { "title": "Eligible health-insurance premium", "lock_in_period": null, "liquidity_note": null, "status": "TODO", "source_url": null, "effective_from": null },
-        "80CCD(1B)": { "title": "NPS contribution", "lock_in_period": null, "liquidity_note": null, "status": "TODO", "source_url": null, "effective_from": null },
-        "80E": { "title": "Eligible education-loan interest", "lock_in_period": null, "liquidity_note": null, "status": "TODO", "source_url": null, "effective_from": null },
-        "24B": { "title": "Eligible home-loan interest", "lock_in_period": null, "liquidity_note": null, "status": "TODO", "source_url": null, "effective_from": null },
-        "HRA": { "title": "HRA rent documentation", "lock_in_period": null, "liquidity_note": null, "status": "TODO", "source_url": null, "effective_from": null }
-      },
+      "version": "fy-2025-26-salary-demo-v1",
+      "financial_year": "2025-26",
+      "assessment_year": "2026-27",
+      "governing_act": "Income-tax Act, 1961",
+      "effective_from": "2025-04-01",
       "regimes": {
         "old": {
           "standard_deduction": {
-            "value": null,
-            "status": "TODO",
-            "source_url": null,
-            "effective_from": null
+            "value": "50000",
+            "status": "verified",
+            "source_url": "https://www.incometaxindia.gov.in/w/section-16-228",
+            "effective_from": "2025-04-01",
+            "effective_to": "2026-03-31",
+            "source_title": "Income-tax Act, 1961 s.16 Deductions from salaries (current text)",
+            "section_ref": "s.16(ia): fifty thousand rupees or salary, whichever is less",
+            "verified_on": "2026-10-10",
+            "notes": "Mapped from the supplied official-source reference package."
           },
           "hra": {
             "enabled": {
-              "value": null,
-              "status": "TODO",
-              "source_url": null,
-              "effective_from": null
+              "value": true,
+              "status": "verified",
+              "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+              "effective_from": "2025-04-01",
+              "effective_to": "2026-03-31",
+              "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+              "section_ref": "Conditions list item (b) s.10(13A)",
+              "verified_on": "2026-10-10",
+              "notes": "Mapped from the supplied official-source reference package."
             },
             "rent_less_percent": {
-              "value": null,
-              "status": "TODO",
-              "source_url": null,
-              "effective_from": null
+              "value": "0.1",
+              "status": "verified",
+              "source_url": "https://www.incometaxindia.gov.in/w/rule-2a-1",
+              "effective_from": "2025-04-01",
+              "effective_to": "2026-03-31",
+              "source_title": "Income-tax Rules, 1962 r.2A Limits for the purposes of s.10(13A)",
+              "section_ref": "r.2A(a),(b),(c)",
+              "verified_on": "2026-10-10",
+              "notes": "Mapped from the supplied official-source reference package."
             },
             "metro_salary_percent": {
-              "value": null,
-              "status": "TODO",
-              "source_url": null,
-              "effective_from": null
+              "value": "0.5",
+              "status": "verified",
+              "source_url": "https://www.incometaxindia.gov.in/w/rule-2a-1",
+              "effective_from": "2025-04-01",
+              "effective_to": "2026-03-31",
+              "source_title": "Income-tax Rules, 1962 r.2A Limits for the purposes of s.10(13A)",
+              "section_ref": "r.2A(c)(i),(ii): Bombay, Calcutta, Delhi, Madras = one-half; any other place = two-fifths",
+              "verified_on": "2026-10-10",
+              "notes": "Mapped from the supplied official-source reference package."
             },
             "non_metro_salary_percent": {
-              "value": null,
-              "status": "TODO",
-              "source_url": null,
-              "effective_from": null
+              "value": "0.4",
+              "status": "verified",
+              "source_url": "https://www.incometaxindia.gov.in/w/rule-2a-1",
+              "effective_from": "2025-04-01",
+              "effective_to": "2026-03-31",
+              "source_title": "Income-tax Rules, 1962 r.2A Limits for the purposes of s.10(13A)",
+              "section_ref": "r.2A(c)(i),(ii): Bombay, Calcutta, Delhi, Madras = one-half; any other place = two-fifths",
+              "verified_on": "2026-10-10",
+              "notes": "Mapped from the supplied official-source reference package."
             }
           },
           "deductions": {
             "80C": {
-              "enabled": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-              "limit": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "enabled": {
+                "value": true,
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Deductions (old regime): ss.80C, 80CCC, 80CCD(1) combined limit 1,50,000",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "limit": {
+                "value": "150000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Deductions (old regime): ss.80C, 80CCC, 80CCD(1) combined limit 1,50,000",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
               "limits_by_age": {}
             },
             "80D": {
-              "enabled": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-              "limit": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "enabled": {
+                "value": true,
+                "status": "verified",
+                "source_url": "https://www.incometaxindia.gov.in/w/section-80d-60",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "Income-tax Act, 1961 s.80D Health insurance premia",
+                "section_ref": "s.80D(2)(a),(b), (2A), (4); amounts per S1 s.80D table",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "limit": {
+                "value": "25000",
+                "status": "verified",
+                "source_url": "https://www.incometaxindia.gov.in/w/section-80d-60",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "Income-tax Act, 1961 s.80D Health insurance premia",
+                "section_ref": "s.80D(2)(a),(b), (2A), (4); amounts per S1 s.80D table",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
               "limits_by_age": {
-                "below_60": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-                "60_to_79": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-                "80_plus": { "value": null, "status": "TODO", "source_url": null, "effective_from": null }
+                "below_60": {
+                  "value": "25000",
+                  "status": "verified",
+                  "source_url": "https://www.incometaxindia.gov.in/w/section-80d-60",
+                  "effective_from": "2025-04-01",
+                  "effective_to": "2026-03-31",
+                  "source_title": "Income-tax Act, 1961 s.80D Health insurance premia",
+                  "section_ref": "s.80D(2)(a),(b), (2A), (4); amounts per S1 s.80D table",
+                  "verified_on": "2026-10-10",
+                  "notes": "Mapped from the supplied official-source reference package."
+                },
+                "60_to_79": {
+                  "value": "50000",
+                  "status": "verified",
+                  "source_url": "https://www.incometaxindia.gov.in/w/section-80d-60",
+                  "effective_from": "2025-04-01",
+                  "effective_to": "2026-03-31",
+                  "source_title": "Income-tax Act, 1961 s.80D Health insurance premia",
+                  "section_ref": "s.80D(2)(a),(b), (2A), (4); amounts per S1 s.80D table",
+                  "verified_on": "2026-10-10",
+                  "notes": "Mapped from the supplied official-source reference package."
+                },
+                "80_plus": {
+                  "value": "50000",
+                  "status": "verified",
+                  "source_url": "https://www.incometaxindia.gov.in/w/section-80d-60",
+                  "effective_from": "2025-04-01",
+                  "effective_to": "2026-03-31",
+                  "source_title": "Income-tax Act, 1961 s.80D Health insurance premia",
+                  "section_ref": "s.80D(2)(a),(b), (2A), (4); amounts per S1 s.80D table",
+                  "verified_on": "2026-10-10",
+                  "notes": "Mapped from the supplied official-source reference package."
+                }
               }
             },
             "80CCD(1B)": {
-              "enabled": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-              "limit": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "enabled": {
+                "value": true,
+                "status": "verified",
+                "source_url": "https://www.incometaxindia.gov.in/w/section-80ccd-24",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "Income-tax Act, 1961 s.80CCD Pension scheme contribution",
+                "section_ref": "s.80CCD(1B): not exceeding fifty thousand rupees, over and above 80CCD(1)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "limit": {
+                "value": "50000",
+                "status": "verified",
+                "source_url": "https://www.incometaxindia.gov.in/w/section-80ccd-24",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "Income-tax Act, 1961 s.80CCD Pension scheme contribution",
+                "section_ref": "s.80CCD(1B): not exceeding fifty thousand rupees, over and above 80CCD(1)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
               "limits_by_age": {}
             },
             "80E": {
-              "enabled": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-              "limit": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "enabled": {
+                "value": true,
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "s.80E",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "limit": {
+                "value": "0",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "s.80E",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
               "limits_by_age": {}
             },
             "24B": {
-              "enabled": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-              "limit": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "enabled": {
+                "value": true,
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "s.24(b) table (old regime)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "limit": {
+                "value": "200000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "s.24(b) table (old regime)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
               "limits_by_age": {}
             }
           },
           "slabs": [
             {
-              "lower_bound": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-              "upper_bound": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-              "rate": { "value": null, "status": "TODO", "source_url": null, "effective_from": null }
+              "lower_bound": {
+                "value": "0",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, old regime, individual below 60",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "upper_bound": {
+                "value": "250000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, old regime, individual below 60",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "rate": {
+                "value": "0.0",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, old regime, individual below 60",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              }
+            },
+            {
+              "lower_bound": {
+                "value": "250000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, old regime, individual below 60",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "upper_bound": {
+                "value": "500000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, old regime, individual below 60",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "rate": {
+                "value": "0.05",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, old regime, individual below 60",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              }
+            },
+            {
+              "lower_bound": {
+                "value": "500000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, old regime, individual below 60",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "upper_bound": {
+                "value": "1000000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, old regime, individual below 60",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "rate": {
+                "value": "0.2",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, old regime, individual below 60",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              }
+            },
+            {
+              "lower_bound": {
+                "value": "1000000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, old regime, individual below 60",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "upper_bound": {
+                "value": null,
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, old regime, individual below 60",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "rate": {
+                "value": "0.3",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, old regime, individual below 60",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              }
             }
           ],
           "rebate": {
-            "income_threshold": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-            "threshold_inclusive": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-            "maximum": { "value": null, "status": "TODO", "source_url": null, "effective_from": null }
+            "income_threshold": {
+              "value": "500000",
+              "status": "verified",
+              "source_url": "https://www.incometaxindia.gov.in/w/section-87a-30",
+              "effective_from": "2025-04-01",
+              "effective_to": "2026-03-31",
+              "source_title": "Income-tax Act, 1961 s.87A Rebate of income-tax (current text)",
+              "section_ref": "s.87A main para",
+              "verified_on": "2026-10-10",
+              "notes": "Mapped from the supplied official-source reference package."
+            },
+            "threshold_inclusive": {
+              "value": true,
+              "status": "verified",
+              "source_url": "https://www.incometaxindia.gov.in/w/section-87a-30",
+              "effective_from": "2025-04-01",
+              "effective_to": "2026-03-31",
+              "source_title": "Income-tax Act, 1961 s.87A Rebate of income-tax (current text)",
+              "section_ref": "s.87A main para ('individual resident in India'); S2 note: deductible before calculating cess",
+              "verified_on": "2026-10-10",
+              "notes": "Mapped from the supplied official-source reference package."
+            },
+            "maximum": {
+              "value": "12500",
+              "status": "verified",
+              "source_url": "https://www.incometaxindia.gov.in/w/section-87a-30",
+              "effective_from": "2025-04-01",
+              "effective_to": "2026-03-31",
+              "source_title": "Income-tax Act, 1961 s.87A Rebate of income-tax (current text)",
+              "section_ref": "s.87A main para: 100% of tax or 12,500, whichever is less",
+              "verified_on": "2026-10-10",
+              "notes": "Mapped from the supplied official-source reference package."
+            }
           },
           "surcharge_bands": [
             {
-              "threshold": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-              "rate": { "value": null, "status": "TODO", "source_url": null, "effective_from": null }
+              "threshold": {
+                "value": "5000000",
+                "status": "verified",
+                "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+                "section_ref": "Tax rates: surcharge table AY 2026-27 (individuals, old regime)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "rate": {
+                "value": "0.1",
+                "status": "verified",
+                "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+                "section_ref": "Tax rates: surcharge table AY 2026-27 (individuals, old regime)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              }
+            },
+            {
+              "threshold": {
+                "value": "10000000",
+                "status": "verified",
+                "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+                "section_ref": "Tax rates: surcharge table AY 2026-27 (individuals, old regime)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "rate": {
+                "value": "0.15",
+                "status": "verified",
+                "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+                "section_ref": "Tax rates: surcharge table AY 2026-27 (individuals, old regime)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              }
+            },
+            {
+              "threshold": {
+                "value": "20000000",
+                "status": "verified",
+                "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+                "section_ref": "Tax rates: surcharge table AY 2026-27 (individuals, old regime)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "rate": {
+                "value": "0.25",
+                "status": "verified",
+                "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+                "section_ref": "Tax rates: surcharge table AY 2026-27 (individuals, old regime)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              }
             }
           ],
-          "cess_rate": { "value": null, "status": "TODO", "source_url": null, "effective_from": null }
+          "cess_rate": {
+            "value": "0.04",
+            "status": "verified",
+            "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+            "effective_from": "2025-04-01",
+            "effective_to": "2026-03-31",
+            "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+            "section_ref": "Tax rates: 4% on income-tax plus surcharge",
+            "verified_on": "2026-10-10",
+            "notes": "Mapped from the supplied official-source reference package."
+          }
         },
         "new": {
           "standard_deduction": {
-            "value": null,
-            "status": "TODO",
-            "source_url": null,
-            "effective_from": null
+            "value": "75000",
+            "status": "verified",
+            "source_url": "https://www.incometaxindia.gov.in/w/section-16-228",
+            "effective_from": "2025-04-01",
+            "effective_to": "2026-03-31",
+            "source_title": "Income-tax Act, 1961 s.16 Deductions from salaries (current text)",
+            "section_ref": "s.16(ia) proviso: 75,000 where tax computed under s.115BAC(1A) cl.(ii) or (iii)",
+            "verified_on": "2026-10-10",
+            "notes": "Mapped from the supplied official-source reference package."
           },
           "hra": {
             "enabled": {
-              "value": null,
-              "status": "TODO",
-              "source_url": null,
-              "effective_from": null
+              "value": false,
+              "status": "verified",
+              "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+              "effective_from": "2025-04-01",
+              "effective_to": "2026-03-31",
+              "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+              "section_ref": "Conditions list item (b) s.10(13A)",
+              "verified_on": "2026-10-10",
+              "notes": "Mapped from the supplied official-source reference package."
             },
             "rent_less_percent": {
-              "value": null,
-              "status": "TODO",
-              "source_url": null,
-              "effective_from": null
+              "value": "0.1",
+              "status": "verified",
+              "source_url": "https://www.incometaxindia.gov.in/w/rule-2a-1",
+              "effective_from": "2025-04-01",
+              "effective_to": "2026-03-31",
+              "source_title": "Income-tax Rules, 1962 r.2A Limits for the purposes of s.10(13A)",
+              "section_ref": "r.2A(a),(b),(c)",
+              "verified_on": "2026-10-10",
+              "notes": "Mapped from the supplied official-source reference package."
             },
             "metro_salary_percent": {
-              "value": null,
-              "status": "TODO",
-              "source_url": null,
-              "effective_from": null
+              "value": "0.5",
+              "status": "verified",
+              "source_url": "https://www.incometaxindia.gov.in/w/rule-2a-1",
+              "effective_from": "2025-04-01",
+              "effective_to": "2026-03-31",
+              "source_title": "Income-tax Rules, 1962 r.2A Limits for the purposes of s.10(13A)",
+              "section_ref": "r.2A(c)(i),(ii): Bombay, Calcutta, Delhi, Madras = one-half; any other place = two-fifths",
+              "verified_on": "2026-10-10",
+              "notes": "Mapped from the supplied official-source reference package."
             },
             "non_metro_salary_percent": {
-              "value": null,
-              "status": "TODO",
-              "source_url": null,
-              "effective_from": null
+              "value": "0.4",
+              "status": "verified",
+              "source_url": "https://www.incometaxindia.gov.in/w/rule-2a-1",
+              "effective_from": "2025-04-01",
+              "effective_to": "2026-03-31",
+              "source_title": "Income-tax Rules, 1962 r.2A Limits for the purposes of s.10(13A)",
+              "section_ref": "r.2A(c)(i),(ii): Bombay, Calcutta, Delhi, Madras = one-half; any other place = two-fifths",
+              "verified_on": "2026-10-10",
+              "notes": "Mapped from the supplied official-source reference package."
             }
           },
           "deductions": {
             "80C": {
-              "enabled": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-              "limit": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "enabled": {
+                "value": false,
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Deductions (old regime): ss.80C, 80CCC, 80CCD(1) combined limit 1,50,000",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "limit": {
+                "value": "150000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Deductions (old regime): ss.80C, 80CCC, 80CCD(1) combined limit 1,50,000",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
               "limits_by_age": {}
             },
             "80D": {
-              "enabled": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-              "limit": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "enabled": {
+                "value": false,
+                "status": "verified",
+                "source_url": "https://www.incometaxindia.gov.in/w/section-80d-60",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "Income-tax Act, 1961 s.80D Health insurance premia",
+                "section_ref": "s.80D(2)(a),(b), (2A), (4); amounts per S1 s.80D table",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "limit": {
+                "value": "25000",
+                "status": "verified",
+                "source_url": "https://www.incometaxindia.gov.in/w/section-80d-60",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "Income-tax Act, 1961 s.80D Health insurance premia",
+                "section_ref": "s.80D(2)(a),(b), (2A), (4); amounts per S1 s.80D table",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
               "limits_by_age": {
-                "below_60": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-                "60_to_79": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-                "80_plus": { "value": null, "status": "TODO", "source_url": null, "effective_from": null }
+                "below_60": {
+                  "value": "25000",
+                  "status": "verified",
+                  "source_url": "https://www.incometaxindia.gov.in/w/section-80d-60",
+                  "effective_from": "2025-04-01",
+                  "effective_to": "2026-03-31",
+                  "source_title": "Income-tax Act, 1961 s.80D Health insurance premia",
+                  "section_ref": "s.80D(2)(a),(b), (2A), (4); amounts per S1 s.80D table",
+                  "verified_on": "2026-10-10",
+                  "notes": "Mapped from the supplied official-source reference package."
+                },
+                "60_to_79": {
+                  "value": "50000",
+                  "status": "verified",
+                  "source_url": "https://www.incometaxindia.gov.in/w/section-80d-60",
+                  "effective_from": "2025-04-01",
+                  "effective_to": "2026-03-31",
+                  "source_title": "Income-tax Act, 1961 s.80D Health insurance premia",
+                  "section_ref": "s.80D(2)(a),(b), (2A), (4); amounts per S1 s.80D table",
+                  "verified_on": "2026-10-10",
+                  "notes": "Mapped from the supplied official-source reference package."
+                },
+                "80_plus": {
+                  "value": "50000",
+                  "status": "verified",
+                  "source_url": "https://www.incometaxindia.gov.in/w/section-80d-60",
+                  "effective_from": "2025-04-01",
+                  "effective_to": "2026-03-31",
+                  "source_title": "Income-tax Act, 1961 s.80D Health insurance premia",
+                  "section_ref": "s.80D(2)(a),(b), (2A), (4); amounts per S1 s.80D table",
+                  "verified_on": "2026-10-10",
+                  "notes": "Mapped from the supplied official-source reference package."
+                }
               }
             },
             "80CCD(1B)": {
-              "enabled": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-              "limit": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "enabled": {
+                "value": false,
+                "status": "verified",
+                "source_url": "https://www.incometaxindia.gov.in/w/section-80ccd-24",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "Income-tax Act, 1961 s.80CCD Pension scheme contribution",
+                "section_ref": "s.80CCD(1B): not exceeding fifty thousand rupees, over and above 80CCD(1)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "limit": {
+                "value": "50000",
+                "status": "verified",
+                "source_url": "https://www.incometaxindia.gov.in/w/section-80ccd-24",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "Income-tax Act, 1961 s.80CCD Pension scheme contribution",
+                "section_ref": "s.80CCD(1B): not exceeding fifty thousand rupees, over and above 80CCD(1)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
               "limits_by_age": {}
             },
             "80E": {
-              "enabled": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-              "limit": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "enabled": {
+                "value": false,
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "s.80E",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "limit": {
+                "value": "0",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "s.80E",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
               "limits_by_age": {}
             },
             "24B": {
-              "enabled": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-              "limit": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
+              "enabled": {
+                "value": false,
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "s.24(b) table (old regime)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "limit": {
+                "value": "200000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "s.24(b) table (old regime)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
               "limits_by_age": {}
             }
           },
           "slabs": [
             {
-              "lower_bound": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-              "upper_bound": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-              "rate": { "value": null, "status": "TODO", "source_url": null, "effective_from": null }
+              "lower_bound": {
+                "value": "0",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "upper_bound": {
+                "value": "400000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "rate": {
+                "value": "0.0",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              }
+            },
+            {
+              "lower_bound": {
+                "value": "400000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "upper_bound": {
+                "value": "800000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "rate": {
+                "value": "0.05",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              }
+            },
+            {
+              "lower_bound": {
+                "value": "800000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "upper_bound": {
+                "value": "1200000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "rate": {
+                "value": "0.1",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              }
+            },
+            {
+              "lower_bound": {
+                "value": "1200000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "upper_bound": {
+                "value": "1600000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "rate": {
+                "value": "0.15",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              }
+            },
+            {
+              "lower_bound": {
+                "value": "1600000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "upper_bound": {
+                "value": "2000000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "rate": {
+                "value": "0.2",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              }
+            },
+            {
+              "lower_bound": {
+                "value": "2000000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "upper_bound": {
+                "value": "2400000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "rate": {
+                "value": "0.25",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              }
+            },
+            {
+              "lower_bound": {
+                "value": "2400000",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "upper_bound": {
+                "value": null,
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "rate": {
+                "value": "0.3",
+                "status": "verified",
+                "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+                "section_ref": "Tax Slabs for AY 2026-27, new regime u/s 115BAC (same table for <60, 60-79, 80+)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              }
             }
           ],
           "rebate": {
-            "income_threshold": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-            "threshold_inclusive": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-            "maximum": { "value": null, "status": "TODO", "source_url": null, "effective_from": null }
+            "income_threshold": {
+              "value": "1200000",
+              "status": "verified",
+              "source_url": "https://www.incometaxindia.gov.in/w/section-87a-30",
+              "effective_from": "2025-04-01",
+              "effective_to": "2026-03-31",
+              "source_title": "Income-tax Act, 1961 s.87A Rebate of income-tax (current text)",
+              "section_ref": "s.87A first proviso cl.(a): total income not exceeding 12 lakh, chargeable u/s 115BAC(1A)",
+              "verified_on": "2026-10-10",
+              "notes": "Mapped from the supplied official-source reference package."
+            },
+            "threshold_inclusive": {
+              "value": true,
+              "status": "verified",
+              "source_url": "https://www.incometaxindia.gov.in/w/section-87a-30",
+              "effective_from": "2025-04-01",
+              "effective_to": "2026-03-31",
+              "source_title": "Income-tax Act, 1961 s.87A Rebate of income-tax (current text)",
+              "section_ref": "s.87A main para ('individual resident in India'); S2 note: deductible before calculating cess",
+              "verified_on": "2026-10-10",
+              "notes": "Mapped from the supplied official-source reference package."
+            },
+            "maximum": {
+              "value": "60000",
+              "status": "verified",
+              "source_url": "https://www.incometaxindia.gov.in/w/section-87a-30",
+              "effective_from": "2025-04-01",
+              "effective_to": "2026-03-31",
+              "source_title": "Income-tax Act, 1961 s.87A Rebate of income-tax (current text)",
+              "section_ref": "s.87A first proviso cl.(a): lower of 100% of income-tax or sixty thousand rupees",
+              "verified_on": "2026-10-10",
+              "notes": "Mapped from the supplied official-source reference package."
+            }
           },
           "surcharge_bands": [
             {
-              "threshold": { "value": null, "status": "TODO", "source_url": null, "effective_from": null },
-              "rate": { "value": null, "status": "TODO", "source_url": null, "effective_from": null }
+              "threshold": {
+                "value": "5000000",
+                "status": "verified",
+                "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+                "section_ref": "Tax rates: surcharge table for new tax regime (max 25%)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "rate": {
+                "value": "0.1",
+                "status": "verified",
+                "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+                "section_ref": "Tax rates: surcharge table for new tax regime (max 25%)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              }
+            },
+            {
+              "threshold": {
+                "value": "10000000",
+                "status": "verified",
+                "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+                "section_ref": "Tax rates: surcharge table for new tax regime (max 25%)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "rate": {
+                "value": "0.15",
+                "status": "verified",
+                "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+                "section_ref": "Tax rates: surcharge table for new tax regime (max 25%)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              }
+            },
+            {
+              "threshold": {
+                "value": "20000000",
+                "status": "verified",
+                "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+                "section_ref": "Tax rates: surcharge table for new tax regime (max 25%)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              },
+              "rate": {
+                "value": "0.25",
+                "status": "verified",
+                "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+                "effective_from": "2025-04-01",
+                "effective_to": "2026-03-31",
+                "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+                "section_ref": "Tax rates: surcharge table for new tax regime (max 25%)",
+                "verified_on": "2026-10-10",
+                "notes": "Mapped from the supplied official-source reference package."
+              }
             }
           ],
-          "cess_rate": { "value": null, "status": "TODO", "source_url": null, "effective_from": null }
+          "cess_rate": {
+            "value": "0.04",
+            "status": "verified",
+            "source_url": "https://www.incometaxindia.gov.in/w/tax-rates%E2%80%8B",
+            "effective_from": "2025-04-01",
+            "effective_to": "2026-03-31",
+            "source_title": "Income Tax Dept: Tax rates (Income-tax Act, 1961 as amended by Finance Act, 2026)",
+            "section_ref": "Tax rates: 4% on income-tax plus surcharge",
+            "verified_on": "2026-10-10",
+            "notes": "Mapped from the supplied official-source reference package."
+          }
+        }
+      },
+      "suggestion_terms": {
+        "80C_ELSS": {
+          "title": "Eligible Section 80C contribution",
+          "lock_in_period": "Varies by eligible instrument; verify before investing",
+          "liquidity_note": "Use only an eligible Section 80C payment or investment and retain proof.",
+          "status": "verified",
+          "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+          "effective_from": "2025-04-01",
+          "effective_to": "2026-03-31",
+          "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+          "section_ref": "Section 80C",
+          "verified_on": "2026-10-10",
+          "notes": "Generic deduction headroom; product-specific returns and lock-in are not modeled."
+        },
+        "80C_PPF": {
+          "title": "Eligible Section 80C contribution (alternative)",
+          "lock_in_period": "Varies by eligible instrument; verify before investing",
+          "liquidity_note": "This is an alternative to the other 80C option; retain payment proof.",
+          "status": "verified",
+          "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+          "effective_from": "2025-04-01",
+          "effective_to": "2026-03-31",
+          "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+          "section_ref": "Section 80C",
+          "verified_on": "2026-10-10",
+          "notes": "Alternative within the combined Section 80C limit."
+        },
+        "80CCD(1B)": {
+          "title": "Additional eligible NPS contribution",
+          "lock_in_period": "NPS withdrawal and exit conditions apply; verify before contributing",
+          "liquidity_note": "Retain the NPS contribution statement and review withdrawal conditions.",
+          "status": "verified",
+          "source_url": "https://www.incometaxindia.gov.in/w/section-80ccd-24",
+          "effective_from": "2025-04-01",
+          "effective_to": "2026-03-31",
+          "source_title": "Income-tax Act, 1961 s.80CCD Pension scheme contribution",
+          "section_ref": "Section 80CCD(1B)",
+          "verified_on": "2026-10-10",
+          "notes": "Old-regime deduction headroom only."
+        },
+        "80D": {
+          "title": "Eligible health-insurance premium",
+          "lock_in_period": "No statutory investment lock-in",
+          "liquidity_note": "This is an eligible premium expense; retain the policy and payment proof.",
+          "status": "verified",
+          "source_url": "https://www.incometaxindia.gov.in/w/section-80d-60",
+          "effective_from": "2025-04-01",
+          "effective_to": "2026-03-31",
+          "source_title": "Income-tax Act, 1961 s.80D Health insurance premia",
+          "section_ref": "Section 80D",
+          "verified_on": "2026-10-10",
+          "notes": "Shown only when the confirmed profile marks the expense eligible."
+        },
+        "HRA": {
+          "title": "Claim eligible HRA exemption",
+          "lock_in_period": "No lock-in",
+          "liquidity_note": "Requires actual rent payment and supporting records.",
+          "status": "verified",
+          "source_url": "https://www.incometaxindia.gov.in/w/rule-2a-1",
+          "effective_from": "2025-04-01",
+          "effective_to": "2026-03-31",
+          "source_title": "Income-tax Rules, 1962 r.2A Limits for the purposes of s.10(13A)",
+          "section_ref": "Section 10(13A) and Rule 2A",
+          "verified_on": "2026-10-10",
+          "notes": "The engine uses the confirmed salary and rent inputs."
+        },
+        "80E": {
+          "title": "Eligible education-loan interest",
+          "lock_in_period": "No investment lock-in; loan eligibility conditions apply",
+          "liquidity_note": "Retain the lender interest certificate and eligible loan records.",
+          "status": "verified",
+          "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+          "effective_from": "2025-04-01",
+          "effective_to": "2026-03-31",
+          "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+          "section_ref": "Section 80E",
+          "verified_on": "2026-10-10",
+          "notes": "Shown only when the confirmed profile marks the expense eligible."
+        },
+        "24B": {
+          "title": "Eligible home-loan interest",
+          "lock_in_period": "No investment lock-in; property and loan conditions apply",
+          "liquidity_note": "Retain the lender interest certificate and property documents.",
+          "status": "verified",
+          "source_url": "https://www.incometax.gov.in/iec/foportal/help/individual/return-applicable-1",
+          "effective_from": "2025-04-01",
+          "effective_to": "2026-03-31",
+          "source_title": "e-Filing portal: Salaried Individuals for AY 2026-27 (tax slabs, deductions); page last reviewed 09-Jul-2026",
+          "section_ref": "Section 24(b)",
+          "verified_on": "2026-10-10",
+          "notes": "Old-regime supported home-loan scenario only."
         }
       }
     }

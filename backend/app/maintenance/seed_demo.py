@@ -12,7 +12,7 @@ from app.core.config import get_settings
 from app.core.database import SessionFactory
 from app.models import Document, ExtractionResult, User
 from app.schemas.extraction import Form16Extraction
-from app.services.storage.firebase_storage import FirebaseStorage
+from app.services.storage.supabase_storage import SupabaseStorage
 
 logger = structlog.get_logger(__name__)
 
@@ -65,7 +65,7 @@ async def seed_demo() -> UUID:
         raise RuntimeError("Set DEMO_USER_ID to the UUID of a pre-created demo user.")
     user_id = UUID(demo_user_value)
     settings = get_settings()
-    storage = FirebaseStorage(settings)
+    storage = SupabaseStorage(settings)
     document_id = uuid4()
     extraction_id = uuid4()
     object_path = f"{user_id}/demo/{document_id}.pdf"

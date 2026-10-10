@@ -26,12 +26,28 @@ from app.services.chat.grounding import (
     unique_official_citations,
 )
 from app.services.rag.retriever import KnowledgeBase, KnowledgeBaseUnavailable, RetrievedChunk
+from app.services.suggestions.engine import build_suggestion_drafts
 from app.services.tax import TaxService
 from app.services.tax_engine.rules import RULES_FILE, RuleConfigurationError, load_rules
 
 logger = structlog.get_logger(__name__)
 PROMPT_FILE = Path(__file__).parent / "prompts" / "chat_v1.txt"
 DISCLAIMER = "This is guidance, not professional tax advice."
+GREETING_MESSAGE = (
+    "Hi! I’m your FinTax AI assistant. I can explain your confirmed tax calculation, "
+    "compare regimes, or show verified tax-saving opportunities. What would you like to explore?"
+)
+INTAKE_MESSAGE = """Before I suggest a personal tax plan, please share these details in one reply:
+
+1. Financial year, age, and residential status (resident, RNOR, or NRI).
+2. Income heads and gross amounts: salary, business/freelance, capital gains,
+   rent, interest, crypto/VDA, and foreign income. For salary, include basic
+   pay, HRA, LTA, NPS and perks; for business, include turnover and expenses.
+3. Current tax regime, TDS, deductions/investments or loans, dependants' or
+   parents' ages, and your risk appetite, liquidity need, and investment horizon.
+
+Please do not share PAN, Aadhaar, bank-account numbers, passwords, or an API
+key. This is guidance, not professional tax advice."""
 
 
 class ChatServiceError(RuntimeError):
@@ -148,6 +164,18 @@ class ChatService:
             chat_session.title = question[:200]
             await self.session.commit()
 
+        # A personal tax recommendation without a verified profile would force
+        # the assistant to infer material facts. Start with a deterministic
+        # intake instead; this response makes no tax claim.
+        if self.user.confirmed_profile is None:
+            return await self.repository.add_message(session_id, "assistant", INTAKE_MESSAGE)
+
+        if _is_greeting(question):
+            return await self.repository.add_message(session_id, "assistant", GREETING_MESSAGE)
+
+        if _is_savings_question(question):
+            return await self._verified_savings_response(session_id)
+
         try:
             source_chunks = await self.knowledge_base.search(question)
         except KnowledgeBaseUnavailable as error:
@@ -194,13 +222,73 @@ class ChatService:
             [citation.model_dump(mode="json") for citation in citations],
         )
 
+    async def _verified_savings_response(self, session_id: UUID) -> ChatMessage:
+        confirmed = ConfirmedTaxpayerProfile.model_validate(self.user.confirmed_profile)
+        rules = load_rules(
+            confirmed.financial_year,
+            path=self.settings.tax_rules_file or RULES_FILE,
+        )
+        rules.require_ready()
+        drafts = build_suggestion_drafts(confirmed, rules)
+        if not drafts:
+            content = (
+                "Current tax: I do not have a verified saving opportunity from your "
+                "confirmed inputs.\n"
+                "Optimised tax: I will not invent a number or assume eligibility.\n"
+                "Savings: ₹0 currently; add only genuine, documented eligible inputs and "
+                "rerun the comparison.\n\n"
+                "Capital gains, unsupported deductions, fake bills, false rent, and "
+                "unverified strategies remain blocked."
+            )
+            return await self.repository.add_message(session_id, content)
+
+        before = drafts[0].before
+        current_tax = min(before.old_regime.total_tax, before.new_regime.total_tax)
+        best_saving = max((draft.tax_saved for draft in drafts), default=current_tax * 0)
+        lines = [
+            f"Current tax: ₹{current_tax}.",
+            "Optimised tax: calculated only from verified engine scenarios.",
+            f"Best verified saving: ₹{best_saving}; alternatives are not combined.",
+            "",
+            "Verified options ranked for your confirmed profile:",
+        ]
+        for draft in sorted(drafts, key=lambda item: item.tax_saved, reverse=True):
+            lines.append(
+                f"- {draft.title}: eligible amount ₹{draft.amount_to_invest}; "
+                f"engine saving ₹{draft.tax_saved}. {draft.explanation}"
+            )
+        lines.extend(
+            [
+                "",
+                "Do not combine alternatives or invest solely for a deduction. "
+                "Keep the payment, policy, lender, or contribution proof.",
+            ]
+        )
+        citations = [
+            Citation(
+                source=rules.suggestion_terms[draft.key].source_title or "Income-tax source",
+                section=rules.suggestion_terms[draft.key].section_ref or draft.rule_reference,
+                link=rules.suggestion_terms[draft.key].source_url,
+            )
+            for draft in drafts
+            if rules.suggestion_terms[draft.key].source_url is not None
+        ]
+        content = "\n".join(lines) + f"\n\n{DISCLAIMER}"
+        return await self.repository.add_message(
+            session_id,
+            "assistant",
+            content,
+            [citation.model_dump(mode="json") for citation in unique_official_citations(citations)],
+        )
+
     async def _generate(
         self,
         history: Sequence[ChatMessage],
         source_chunks: list[RetrievedChunk],
         tool_outputs: list[dict[str, Any]],
     ) -> tuple[str, list[Citation]]:
-        if self.settings.google_api_key is None:
+        api_key = self.settings.google_api_key or self.settings.gemini_api_key
+        if api_key is None:
             raise ChatServiceError("Gemini chat is not configured.")
         source_context = json.dumps(
             [chunk.model_dump(mode="json") for chunk in source_chunks],
@@ -220,7 +308,7 @@ class ChatService:
             for row in history
             if row.role in {"user", "assistant"}
         ]
-        client = genai.Client(api_key=self.settings.google_api_key.get_secret_value())
+        client = genai.Client(api_key=api_key.get_secret_value())
         tool = function_tool()
         collected_citations: list[Citation] = []
         call_count = 0
@@ -344,6 +432,36 @@ class ChatService:
             }
 
         raise ValueError("The requested tool is not available.")
+
+
+def _is_savings_question(question: str) -> bool:
+    normalized = question.casefold()
+    terms = (
+        "save tax",
+        "tax saving",
+        "tax-saving",
+        "reduce my tax",
+        "lower my tax",
+        "deduction",
+        "80c",
+        "nps",
+        "hra",
+    )
+    return any(term in normalized for term in terms)
+
+
+def _is_greeting(question: str) -> bool:
+    normalized = " ".join(question.casefold().strip().split())
+    greetings = {
+        "hi",
+        "hello",
+        "hey",
+        "hiya",
+        "good morning",
+        "good afternoon",
+        "good evening",
+    }
+    return normalized in greetings
 
 
 def _trace_steps(result: dict[str, Any]) -> list[dict[str, Any]]:

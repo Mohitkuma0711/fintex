@@ -192,6 +192,30 @@ export interface FilingGuidance {
   disclaimer: string
 }
 
+export interface TaxRulesSummary {
+  financial_year: string
+  assessment_year: string | null
+  version: string
+  governing_act: string
+  verified_on: string
+  regimes: Record<string, {
+    standard_deduction: string | null
+    slabs: Array<{ lower: string | null; upper: string | null; rate: string | null }>
+    rebate: string | null
+    cess_rate: string | null
+    deductions: Record<string, { enabled: boolean; limit: string | null }>
+  }>
+  verified_suggestions: Array<{
+    key: string
+    title: string
+    section_ref: string | null
+    source_url: string
+    lock_in_period: string | null
+    liquidity_note: string | null
+  }>
+  blocked_until_verified: string[]
+}
+
 export interface ExtractedField {
   value: string | null
   confidence: number
@@ -279,6 +303,7 @@ export interface ConfirmedTaxpayerProfile extends TaxpayerProfileInput {
   employment_type: 'employee' | 'business_freelancer'
   consent_given: true
   financial_year: string
+  assessment_year?: string
   planning_eligibility: {
     health_insurance_eligible: boolean
     eligible_health_insurance_premium: string
@@ -744,6 +769,7 @@ export const fintaxApi = {
   ),
   getFilingGuidance: async () =>
     filingGuidanceSchema.parse(await apiRequest<unknown>('/filing-guidance')),
+  getRulesSummary: () => apiRequest<TaxRulesSummary>('/tax/rules-summary'),
   downloadLatestReport: async () => {
     const token = await accessTokenProvider()
     const headers = new Headers({ Accept: 'application/pdf' })

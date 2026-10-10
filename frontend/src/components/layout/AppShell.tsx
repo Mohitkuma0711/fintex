@@ -9,6 +9,8 @@ const navLinks = [
   { to: '/upload', label: 'Upload' },
   { to: '/simulator', label: 'Simulator' },
   { to: '/filing-guidance', label: 'Filing Guide' },
+  { to: '/rules', label: 'Tax Rules' },
+  { to: '/advisor', label: 'Tax Advisor' },
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/chat', label: 'Ask FinTax' },
 ]

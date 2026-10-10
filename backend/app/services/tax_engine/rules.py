@@ -18,7 +18,12 @@ from pydantic import (
 from app.schemas.tax import AgeBracket
 
 RULES_FILE = Path(__file__).resolve().parents[2] / "rules" / "income_tax_act_2025.json"
-OFFICIAL_SOURCE_HOSTS = {"incometax.gov.in", "incometaxindia.gov.in"}
+OFFICIAL_SOURCE_HOSTS = {
+    "egazette.gov.in",
+    "indiabudget.gov.in",
+    "incometax.gov.in",
+    "incometaxindia.gov.in",
+}
 
 
 class RuleConfigurationError(ValueError):
@@ -47,6 +52,11 @@ class RuleDecimal(RuleModel):
     status: Literal["TODO", "verified"]
     source_url: AnyHttpUrl | None
     effective_from: date | None
+    effective_to: date | None = None
+    source_title: str | None = None
+    section_ref: str | None = None
+    verified_on: date | None = None
+    notes: str | None = None
 
 
 class RuleBoolean(RuleModel):
@@ -54,6 +64,11 @@ class RuleBoolean(RuleModel):
     status: Literal["TODO", "verified"]
     source_url: AnyHttpUrl | None
     effective_from: date | None
+    effective_to: date | None = None
+    source_title: str | None = None
+    section_ref: str | None = None
+    verified_on: date | None = None
+    notes: str | None = None
 
 
 class HraRules(RuleModel):
@@ -93,6 +108,11 @@ class SuggestionTerms(RuleModel):
     status: Literal["TODO", "verified"]
     source_url: AnyHttpUrl | None
     effective_from: date | None
+    effective_to: date | None = None
+    source_title: str | None = None
+    section_ref: str | None = None
+    verified_on: date | None = None
+    notes: str | None = None
 
 
 class RegimeRules(RuleModel):
@@ -117,6 +137,8 @@ class RulesetVersion(RuleModel):
     act: str = Field(min_length=1)
     version: str = Field(min_length=1)
     financial_year: str = Field(min_length=1)
+    assessment_year: str | None = Field(default=None, min_length=1)
+    governing_act: str | None = Field(default=None, min_length=1)
     effective_from: date | None
     regimes: dict[Literal["old", "new"], RegimeRules]
     suggestion_terms: dict[str, SuggestionTerms] = Field(default_factory=dict)
@@ -162,18 +184,12 @@ class RulesetVersion(RuleModel):
         self._validate_rates(regimes)
 
     def require_suggestion_terms_ready(self) -> None:
-        required = {
-            "80C_ELSS",
-            "80C_PPF",
-            "80D",
-            "80CCD(1B)",
-            "80E",
-            "24B",
-            "HRA",
-        }
-        missing = required - self.suggestion_terms.keys()
-        problems = [f"suggestion_terms.{key} is missing" for key in sorted(missing)]
-        for key in sorted(required & self.suggestion_terms.keys()):
+        if not self.suggestion_terms:
+            raise RuleConfigurationError(
+                f"Ruleset {self.version!r} has no verified suggestion terms"
+            )
+        problems: list[str] = []
+        for key in sorted(self.suggestion_terms):
             terms = self.suggestion_terms[key]
             if terms.status != "verified":
                 problems.append(f"suggestion_terms.{key} is not verified")
@@ -298,7 +314,7 @@ def is_official_source(host: str) -> bool:
 def load_rules(
     financial_year: str,
     *,
-    act: str = "Income-tax Act, 2025",
+    act: str = "Income-tax Act, 1961",
     path: Path = RULES_FILE,
 ) -> RulesetVersion:
     """Parse and select one Act/FY ruleset; unverified values remain non-executable."""

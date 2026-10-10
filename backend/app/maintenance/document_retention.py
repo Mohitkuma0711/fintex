@@ -8,14 +8,14 @@ from app.core.config import get_settings
 from app.core.database import SessionFactory
 from app.models import Document
 from app.repositories.documents import DocumentRepository
-from app.services.storage.firebase_storage import FirebaseStorage
+from app.services.storage.supabase_storage import SupabaseStorage
 
 logger = structlog.get_logger(__name__)
 
 
 async def delete_expired_documents() -> int:
     settings = get_settings()
-    storage = FirebaseStorage(settings)
+    storage = SupabaseStorage(settings)
     deleted_count = 0
     async with SessionFactory() as session:
         expired = list(

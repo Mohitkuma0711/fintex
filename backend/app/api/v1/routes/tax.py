@@ -51,6 +51,70 @@ async def compute_tax(
     return TaxComputeResponse(id=record.id, result=result)
 
 
+@router.get(
+    "/rules-summary",
+    summary="Show the verified rules used by the tax engine",
+)
+async def rules_summary(
+    financial_year: str = "2025-26",
+    select_rules: Callable[[str], RulesetVersion] = Depends(require_configured_rules),
+) -> dict[str, object]:
+    rules = select_rules(financial_year)
+
+    def amount(rule: object) -> str | None:
+        value = getattr(rule, "value", None)
+        return str(value) if value is not None else None
+
+    return {
+        "financial_year": rules.financial_year,
+        "assessment_year": rules.assessment_year,
+        "version": rules.version,
+        "governing_act": rules.governing_act or rules.act,
+        "verified_on": "2026-10-10",
+        "regimes": {
+            regime: {
+                "standard_deduction": amount(data.standard_deduction),
+                "slabs": [
+                    {
+                        "lower": amount(slab.lower_bound),
+                        "upper": amount(slab.upper_bound),
+                        "rate": amount(slab.rate),
+                    }
+                    for slab in data.slabs
+                ],
+                "rebate": amount(data.rebate.maximum),
+                "cess_rate": amount(data.cess_rate),
+                "deductions": {
+                    key: {
+                        "enabled": bool(data.enabled.value),
+                        "limit": amount(data.limit),
+                    }
+                    for key, data in data.deductions.items()
+                },
+            }
+            for regime, data in rules.regimes.items()
+        },
+        "verified_suggestions": [
+            {
+                "key": key,
+                "title": terms.title,
+                "section_ref": terms.section_ref,
+                "source_url": str(terms.source_url),
+                "lock_in_period": terms.lock_in_period,
+                "liquidity_note": terms.liquidity_note,
+            }
+            for key, terms in rules.suggestion_terms.items()
+        ],
+        "blocked_until_verified": [
+            "Capital gains treatment and exemptions",
+            "Late-filing interest and fee calculation",
+            "Business and profession income",
+            "Complex house-property loss set-off",
+            "Unsupported deductions or investment products",
+        ],
+    }
+
+
 @router.post(
     "/compare",
     response_model=TaxCompareResponse,

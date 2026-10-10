@@ -4,7 +4,13 @@ from decimal import Decimal
 import pytest
 from pydantic import ValidationError
 
-from app.schemas.tax import DeductionsClaimed, HRAInputs, SalaryComponents, TaxpayerProfile
+from app.schemas.tax import (
+    ConfirmedTaxpayerProfile,
+    DeductionsClaimed,
+    HRAInputs,
+    SalaryComponents,
+    TaxpayerProfile,
+)
 from app.services.tax_engine import (
     RuleConfigurationError,
     calculate_new_regime,
@@ -52,6 +58,42 @@ def test_profile_defaults_and_decimal_string_inputs() -> None:
     assert profile.deductions_claimed.as_mapping()["80CCD(1B)"] == ZERO
 
 
+def test_confirmed_profile_derives_assessment_year_from_financial_year() -> None:
+    profile = ConfirmedTaxpayerProfile.model_validate(
+        {
+            "employment_type": "employee",
+            "consent_given": True,
+            "financial_year": "2025-26",
+            "planning_eligibility": {
+                "health_insurance_eligible": False,
+                "eligible_health_insurance_premium": "0",
+                "education_loan_eligible": False,
+                "eligible_education_loan_interest": "0",
+                "home_loan_eligible": False,
+                "eligible_home_loan_interest": "0",
+            },
+            "salary_components": {
+                "basic_salary": "0",
+                "dearness_allowance": "0",
+                "hra_received": "0",
+                "other_allowances": "0",
+            },
+            "hra_inputs": {"rent_paid": "0"},
+            "other_income": "0",
+            "deductions_claimed": {
+                "section_80c": "0",
+                "section_80d": "0",
+                "section_80ccd_1b": "0",
+                "section_80e": "0",
+                "section_24b": "0",
+            },
+            "age_bracket": "below_60",
+            "city_type": "metro",
+        }
+    )
+    assert profile.assessment_year == "2026-27"
+
+
 @pytest.mark.parametrize(
     "model, data",
     [
@@ -68,13 +110,14 @@ def test_profile_rejects_invalid_or_binary_float_values(model, data) -> None:
         model.model_validate(data)
 
 
-def test_unverified_production_rules_are_loadable_but_not_executable() -> None:
-    rules = load_rules("TODO: assign financial year")
+def test_selected_fy_rules_are_ready_and_unknown_fy_is_blocked() -> None:
+    rules = load_rules("2025-26")
 
-    assert rules.version == "TODO: assign ruleset version"
-    assert rules.act == "Income-tax Act, 2025"
-    with pytest.raises(RuleConfigurationError, match="not verified"):
-        calculate_old_regime(taxpayer_profile(), rules)
+    assert rules.version == "fy-2025-26-salary-demo-v1"
+    assert rules.act == "Income-tax Act, 1961"
+    rules.require_ready()
+    with pytest.raises(RuleConfigurationError, match="No rules"):
+        load_rules("TODO: assign financial year")
 
 
 def test_zero_income_returns_zero_tax_and_a_complete_trace() -> None:

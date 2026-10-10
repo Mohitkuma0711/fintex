@@ -23,6 +23,11 @@
       "properties": {
         "source_url": { "type": ["string", "null"], "format": "uri" },
         "effective_from": { "type": ["string", "null"], "format": "date" },
+        "effective_to": { "type": ["string", "null"], "format": "date" },
+        "source_title": { "type": ["string", "null"] },
+        "section_ref": { "type": ["string", "null"] },
+        "verified_on": { "type": ["string", "null"], "format": "date" },
+        "notes": { "type": ["string", "null"] },
         "status": { "enum": ["TODO", "verified"] },
         "value": { "type": ["string", "null"] }
       },
@@ -34,6 +39,11 @@
       "properties": {
         "source_url": { "type": ["string", "null"], "format": "uri" },
         "effective_from": { "type": ["string", "null"], "format": "date" },
+        "effective_to": { "type": ["string", "null"], "format": "date" },
+        "source_title": { "type": ["string", "null"] },
+        "section_ref": { "type": ["string", "null"] },
+        "verified_on": { "type": ["string", "null"], "format": "date" },
+        "notes": { "type": ["string", "null"] },
         "status": { "enum": ["TODO", "verified"] },
         "value": { "type": ["boolean", "null"] }
       },
@@ -48,7 +58,12 @@
         "liquidity_note": { "type": ["string", "null"] },
         "status": { "enum": ["TODO", "verified"] },
         "source_url": { "type": ["string", "null"], "format": "uri" },
-        "effective_from": { "type": ["string", "null"], "format": "date" }
+        "effective_from": { "type": ["string", "null"], "format": "date" },
+        "effective_to": { "type": ["string", "null"], "format": "date" },
+        "source_title": { "type": ["string", "null"] },
+        "section_ref": { "type": ["string", "null"] },
+        "verified_on": { "type": ["string", "null"], "format": "date" },
+        "notes": { "type": ["string", "null"] }
       },
       "additionalProperties": false
     },
@@ -58,6 +73,8 @@
       "properties": {
         "version": { "type": "string", "minLength": 1 },
         "financial_year": { "type": "string", "minLength": 1 },
+        "assessment_year": { "type": ["string", "null"], "minLength": 1 },
+        "governing_act": { "type": ["string", "null"], "minLength": 1 },
         "effective_from": { "type": ["string", "null"], "format": "date" },
         "suggestion_terms": {
           "type": "object",

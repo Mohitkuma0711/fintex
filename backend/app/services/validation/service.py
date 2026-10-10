@@ -17,7 +17,7 @@ from app.schemas.validation import (
     ConfirmExtractionResponse,
     ExtractionValidationResponse,
 )
-from app.services.storage.firebase_storage import FirebaseStorage
+from app.services.storage.supabase_storage import SupabaseStorage
 from app.services.tax_engine.rules import (
     RULES_FILE,
     RuleConfigurationError,
@@ -35,7 +35,7 @@ class ExtractionValidationService:
         self,
         session: AsyncSession,
         settings: Settings,
-        storage: FirebaseStorage,
+        storage: SupabaseStorage,
     ) -> None:
         self.session = session
         self.settings = settings

@@ -44,7 +44,8 @@ function SuggestionCard({
       <p className="suggestion-card__liquidity">{suggestion.liquidity_note}</p>
       <details className="suggestion-why">
         <summary><CircleHelp aria-hidden="true" size={16} /> Why this applies</summary>
-        <p>{suggestion.explanation}</p>
+      <p><strong>Explanation:</strong> {suggestion.explanation_source === 'gemini' ? 'Gemini, grounded in the verified engine facts' : 'Verified rules engine'}</p>
+      <p>{suggestion.explanation}</p>
         <p><strong>Rule reference:</strong> <code>{suggestion.rule_reference}</code></p>
         <p><strong>Net benefit:</strong> tax saved only. Investment returns, fees, and opportunity cost are not estimated.</p>
       </details>
@@ -129,7 +130,7 @@ export function SuggestionsPanel({
         <div>
           <p className="eyebrow">SUGGEST · FY {data.financial_year}</p>
           <h2 id="suggestions-heading">Personalized next steps</h2>
-          <p>Engine-tested opportunities, ranked by tax saved. Rules {data.rules_version}.</p>
+          <p>Engine-tested legal options, ranked by tax saved. Gemini explains verified options; it cannot invent deductions. Rules {data.rules_version}.</p>
         </div>
         <Link className="button" to="/simulator">Explore a scenario <ArrowUpRight aria-hidden="true" size={16} /></Link>
       </header>

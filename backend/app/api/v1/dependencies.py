@@ -13,8 +13,8 @@ from app.services.extraction.jobs import ExtractionJob
 from app.services.extraction.orchestrator import ExtractionOrchestrator
 from app.services.extraction.virus_scan import PlaceholderVirusScanner, VirusScanner
 from app.services.privacy import PrivacyService
-from app.services.storage.firebase_storage import FirebaseStorage
 from app.services.storage.local_storage import LocalStorage
+from app.services.storage.supabase_storage import SupabaseStorage
 from app.services.suggestions.service import SuggestionService
 from app.services.tax import TaxService
 from app.services.tax_engine.rules import RulesetVersion
@@ -22,10 +22,10 @@ from app.services.users import UserService
 from app.services.validation.service import ExtractionValidationService
 
 
-def get_storage(settings: Settings = Depends(get_settings)) -> FirebaseStorage | LocalStorage:
+def get_storage(settings: Settings = Depends(get_settings)) -> SupabaseStorage | LocalStorage:
     if settings.storage_backend == "local":
         return LocalStorage(settings)
-    return FirebaseStorage(settings)
+    return SupabaseStorage(settings)
 
 
 def get_virus_scanner() -> VirusScanner:
@@ -34,7 +34,7 @@ def get_virus_scanner() -> VirusScanner:
 
 async def get_extraction_job(
     settings: Settings = Depends(get_settings),
-    storage: FirebaseStorage | LocalStorage = Depends(get_storage),
+    storage: SupabaseStorage | LocalStorage = Depends(get_storage),
     scanner: VirusScanner = Depends(get_virus_scanner),
 ) -> ExtractionJob:
     return ExtractionJob(
@@ -48,7 +48,7 @@ async def get_extraction_job(
 async def get_document_service(
     session: AsyncSession = Depends(get_db_session),
     settings: Settings = Depends(get_settings),
-    storage: FirebaseStorage | LocalStorage = Depends(get_storage),
+    storage: SupabaseStorage | LocalStorage = Depends(get_storage),
 ) -> AsyncIterator[DocumentService]:
     yield DocumentService(session, settings, storage)
 
@@ -56,7 +56,7 @@ async def get_document_service(
 async def get_extraction_validation_service(
     session: AsyncSession = Depends(get_db_session),
     settings: Settings = Depends(get_settings),
-    storage: FirebaseStorage | LocalStorage = Depends(get_storage),
+    storage: SupabaseStorage | LocalStorage = Depends(get_storage),
 ) -> AsyncIterator[ExtractionValidationService]:
     yield ExtractionValidationService(session, settings, storage)
 
@@ -85,7 +85,7 @@ async def get_chat_service(
 async def get_privacy_service(
     session: AsyncSession = Depends(get_db_session),
     settings: Settings = Depends(get_settings),
-    storage: FirebaseStorage | LocalStorage = Depends(get_storage),
+    storage: SupabaseStorage | LocalStorage = Depends(get_storage),
 ) -> AsyncIterator[PrivacyService]:
     yield PrivacyService(session, settings, storage)
 

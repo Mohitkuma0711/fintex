@@ -65,26 +65,43 @@ const reviewSchema = z.object({
 
 type ReviewFormValues = z.infer<typeof reviewSchema>
 
-function isExtractedField(value: unknown): value is ExtractedField {
-  return typeof value === 'object' && value !== null &&
-    'value' in value && (typeof value.value === 'string' || value.value === null) &&
-    'confidence' in value && typeof value.confidence === 'number' &&
-    'source_page' in value &&
-    (typeof value.source_page === 'number' || value.source_page === null)
+function parseExtractedField(value: unknown): ExtractedField | null {
+  if (typeof value !== 'object' || value === null || !('value' in value) ||
+      !('confidence' in value) || !('source_page' in value)) {
+    return null
+  }
+  const confidence = typeof value.confidence === 'number'
+    ? value.confidence
+    : typeof value.confidence === 'string'
+      ? Number(value.confidence)
+      : NaN
+  if ((typeof value.value !== 'string' && value.value !== null) ||
+      !Number.isFinite(confidence) ||
+      (typeof value.source_page !== 'number' && value.source_page !== null)) {
+    return null
+  }
+  return {
+    value: value.value,
+    confidence,
+    source_page: value.source_page,
+  }
 }
 
 function visibleFields(fields: Record<string, unknown>): [string, ExtractedField][] {
-  const entries = Object.entries(fields).filter(
-    (entry): entry is [string, ExtractedField] => isExtractedField(entry[1]),
-  )
+  const entries: [string, ExtractedField][] = []
+  Object.entries(fields).forEach(([key, value]) => {
+    const field = parseExtractedField(value)
+    if (field) entries.push([key, field])
+  })
   const deductions = fields.deduction_items
   if (Array.isArray(deductions)) {
     deductions.forEach((item, index) => {
       if (typeof item !== 'object' || item === null || !('section' in item) ||
-          typeof item.section !== 'string' || !('amount' in item) || !isExtractedField(item.amount)) {
+          typeof item.section !== 'string' || !('amount' in item)) {
         return
       }
-      const amountField = item.amount
+      const amountField = parseExtractedField(item.amount)
+      if (!amountField) return
       entries.push([
         `deduction_items.${index}.section`,
         {
@@ -104,8 +121,6 @@ function formatLabel(key: string) {
 }
 
 function emptyForm(): ReviewFormValues {
-  const now = new Date()
-  const startYear = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1
   return {
     employment_type: 'employee',
     field_values: {},
@@ -126,7 +141,7 @@ function emptyForm(): ReviewFormValues {
     },
     age_bracket: 'below_60',
     city_type: 'non_metro',
-    financial_year: `${startYear}-${String(startYear + 1).slice(-2)}`,
+    financial_year: '2025-26',
     planning_eligibility: {
       health_insurance_eligible: false,
       eligible_health_insurance_premium: '0',
@@ -182,9 +197,11 @@ function WorkflowStepper({ manualMode }: { manualMode: boolean }) {
 function ProfileFields({
   register,
   employmentType,
+  onUseDetectedValues,
 }: {
   register: ReturnType<typeof useForm<ReviewFormValues>>['register']
   employmentType: ReviewFormValues['employment_type']
+  onUseDetectedValues?: () => void
 }) {
   const amountFields = [
     ...(employmentType === 'employee'
@@ -214,7 +231,14 @@ function ProfileFields({
           <p className="eyebrow">YOUR TAX PROFILE</p>
           <h2 id="profile-heading">Confirm income details</h2>
         </div>
-        <span className="verify-edit-note">Amounts in ₹</span>
+        <div className="verify-section-heading__actions">
+          <span className="verify-edit-note">Amounts in ₹</span>
+          {onUseDetectedValues && (
+            <button className="button button--small" onClick={onUseDetectedValues} type="button">
+              Use detected values
+            </button>
+          )}
+        </div>
       </div>
       <div className="verify-profile-grid">
         <label className="verify-input">
@@ -456,6 +480,18 @@ export function ReviewPage() {
   const consentError = formErrors.find((error) => error.toLowerCase().includes('consent')) ?? null
   const otherFormErrors = formErrors.filter((error) => error !== consentError)
   const isManualChoice = manualMode && manualStep === 0
+  const detectedValue = (key: string) =>
+    fieldEntries.find(([fieldKey]) => fieldKey === key)?.[1].value?.replaceAll(',', '').trim() ?? ''
+  const useDetectedValues = () => {
+    const grossSalary = detectedValue('gross_salary')
+    const exemptAllowances = detectedValue('exempt_allowances')
+    const chapterVIADeductions = detectedValue('deductions_under_chapter_vi_a')
+    if (grossSalary) form.setValue('salary_components.basic_salary', grossSalary, { shouldDirty: true })
+    if (exemptAllowances) form.setValue('salary_components.other_allowances', exemptAllowances, { shouldDirty: true })
+    if (chapterVIADeductions) {
+      form.setValue('deductions_claimed.section_80c', chapterVIADeductions, { shouldDirty: true })
+    }
+  }
 
   return (
     <section className="review-page container">
@@ -597,6 +633,7 @@ export function ReviewPage() {
                   </div>
                   <ProfileFields
                     employmentType={employmentType}
+                    onUseDetectedValues={useDetectedValues}
                     register={form.register}
                   />
                   <ConsentAndDisclaimer register={form.register} error={consentError} />

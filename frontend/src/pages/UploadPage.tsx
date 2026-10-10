@@ -53,6 +53,31 @@ function fileLabel(contentType: string) {
   return contentType === 'application/pdf' ? 'PDF document' : 'Image document'
 }
 
+function extractionErrorMessage(code: string | null) {
+  switch (code) {
+    case 'unsupported_document':
+      return 'This file is not a readable PDF. Please export the document again or upload a clear JPG/PNG image.'
+    case 'extraction_not_configured':
+      return 'AI document reading is not configured on the server.'
+    case 'extraction_provider_unavailable':
+      return 'The AI document reader is temporarily unavailable. Please retry in a moment.'
+    case 'extraction_timeout':
+      return 'The document took too long to read. Please retry or upload a smaller file.'
+    case 'extraction_invalid_response':
+      return 'The AI could not identify the document fields. Please upload a clearer document.'
+    case 'extraction_rate_limited':
+      return 'The AI document reader is busy right now. Please retry in a moment.'
+    case 'storage_unavailable':
+      return 'Private document storage is temporarily unavailable. Please retry in a moment.'
+    case 'virus_detected':
+      return 'This document did not pass the configured safety scan and cannot be processed.'
+    case 'extraction_failed':
+      return 'This document could not be processed safely. Try exporting it again as a PDF or upload a clear JPG/PNG image.'
+    default:
+      return 'The document could not be read. Please retry or upload a different file.'
+  }
+}
+
 export function UploadPage() {
   const [documentType, setDocumentType] = useState<'form16' | 'salary_slip'>('form16')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -140,6 +165,15 @@ export function UploadPage() {
     if (selectedFile) upload.mutate(selectedFile)
   }
 
+  function chooseDifferentDocument() {
+    setDocumentId(null)
+    setSelectedFile(null)
+    setUploadProgress(0)
+    setDropError('')
+    upload.reset()
+    retry.reset()
+  }
+
   const currentExtraction = extraction.data
   const pageError = dropError || extraction.error?.message || ''
   const extractionFailed = currentExtraction?.status === 'failed'
@@ -148,8 +182,40 @@ export function UploadPage() {
     currentExtraction?.status === 'pending' ||
     currentExtraction?.status === 'processing'
 
+  const showOverlay = upload.isPending || (documentId !== null && isProcessing && !extractionFailed)
+  const overlayMessage = upload.isPending
+    ? 'Uploading your document securely…'
+    : currentExtraction?.status === 'processing'
+      ? 'AI is reading your document…'
+      : 'Preparing your document…'
+
   return (
     <section className="upload-page container">
+      <AnimatePresence>
+        {showOverlay && (
+          <motion.div
+            animate={{ opacity: 1 }}
+            className="upload-overlay"
+            exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+          >
+            <div className="upload-overlay__content">
+              <LoaderCircle aria-hidden="true" className="upload-overlay__spinner" size={48} />
+              <p className="upload-overlay__message">{overlayMessage}</p>
+              {upload.isPending && (
+                <div className="upload-overlay__progress">
+                  <div className="upload-overlay__track">
+                    <span style={{ width: `${uploadProgress}%` }} />
+                  </div>
+                  <small>{uploadProgress}%</small>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="upload-page__topline">
         <Link className="text-link" to="/dashboard">← Back to workspace</Link>
         <span><LockKeyhole aria-hidden="true" size={14} /> Private document workspace</span>
@@ -177,11 +243,10 @@ export function UploadPage() {
                 <option value="salary_slip">Salary slip</option>
               </select>
             </div>
-            <button
+            <div
               {...dropzone.getRootProps({
                 className: `upload-dropzone${dropzone.isDragActive ? ' upload-dropzone--active' : ''}`,
               })}
-              type="button"
             >
               <input {...dropzone.getInputProps()} />
               <span className="upload-dropzone__icon">
@@ -190,7 +255,7 @@ export function UploadPage() {
               <strong>{dropzone.isDragActive ? 'Drop your file to begin' : 'Drop your document here'}</strong>
               <span>or <span className="upload-dropzone__browse">browse files</span></span>
               <small>PDF, JPG, or PNG · Up to 50 MiB</small>
-            </button>
+            </div>
             <label className="upload-retention-option">
               <input
                 checked={autoDeleteAfter30Days}
@@ -236,9 +301,18 @@ export function UploadPage() {
               </div>
             )}
             {pageError && <p className="upload-error" role="alert">{pageError}</p>}
-            {selectedFile && !upload.isPending && (
-              <button className="button button--primary upload-submit" onClick={startUpload} type="button">
-                Upload and extract <ArrowRight aria-hidden="true" size={17} />
+            {selectedFile && (
+              <button
+                className="button button--primary upload-submit"
+                disabled={upload.isPending}
+                onClick={startUpload}
+                type="button"
+              >
+                {upload.isPending ? (
+                  <><LoaderCircle aria-hidden="true" className="upload-btn-spinner" size={17} /> Uploading…</>
+                ) : (
+                  <>Upload and extract <ArrowRight aria-hidden="true" size={17} /></>
+                )}
               </button>
             )}
             {upload.isError && selectedFile && (
@@ -326,7 +400,7 @@ export function UploadPage() {
           {extractionFailed && (
             <div className="extraction-error">
               <p className="upload-error" role="alert">
-                {currentExtraction.error_code ?? 'extraction_failed'}
+                {extractionErrorMessage(currentExtraction.error_code)}
               </p>
               <button
                 className="button button--primary upload-submit"
@@ -335,6 +409,13 @@ export function UploadPage() {
                 type="button"
               >
                 <RotateCcw aria-hidden="true" size={15} /> Retry extraction
+              </button>
+              <button
+                className="button upload-retry-upload"
+                onClick={chooseDifferentDocument}
+                type="button"
+              >
+                <Upload aria-hidden="true" size={15} /> Upload a different document
               </button>
               {retry.isError && <p className="upload-error" role="alert">{retry.error.message}</p>}
             </div>

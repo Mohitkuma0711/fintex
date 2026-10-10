@@ -80,6 +80,7 @@ class ConfirmedTaxpayerProfile(TaxpayerProfile):
     employment_type: Literal["employee", "business_freelancer"]
     consent_given: Literal[True]
     financial_year: str = Field(pattern=r"^\d{4}-\d{2}$")
+    assessment_year: str | None = Field(default=None, pattern=r"^\d{4}-\d{2}$")
     planning_eligibility: PlanningEligibility
 
     def to_taxpayer_profile(self) -> TaxpayerProfile:
@@ -89,6 +90,7 @@ class ConfirmedTaxpayerProfile(TaxpayerProfile):
                     "employment_type",
                     "consent_given",
                     "financial_year",
+                    "assessment_year",
                     "planning_eligibility",
                 }
             )
@@ -163,6 +165,19 @@ class ConfirmedTaxpayerProfile(TaxpayerProfile):
                 raise ValueError(
                     f"planning_eligibility.{field_name} must be supplied as a decimal string."
                 )
+        if value.get("assessment_year") is None:
+            financial_year = value.get("financial_year")
+            if (
+                isinstance(financial_year, str)
+                and financial_year[:4].isdigit()
+                and financial_year[-2:].isdigit()
+            ):
+                value = {
+                    **value,
+                    "assessment_year": (
+                        f"{int(financial_year[:4]) + 1}-{(int(financial_year[-2:]) + 1):02d}"
+                    ),
+                }
         return value
 
 

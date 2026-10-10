@@ -1,10 +1,14 @@
 # Versioned income-tax rules
 
-`income_tax_act_2025.json` is a deliberately incomplete, schema-checked rules
-template. **It is not usable for tax calculations.** All values are `null`,
-their status is `TODO`, and calculations must refuse the ruleset until every
-applicable entry has been researched, recorded, and reviewed. No slab, limit,
-rebate, rate, or effective date has been inferred from memory.
+`income_tax_act_2025.json` contains the schema-checked FY 2025-26 salary-demo
+ruleset. It is selected for FY 2025-26 / AY 2026-27 and is limited to the
+salary calculation path currently implemented by the application.
+
+`ruleset_fy2025_26_reference.json` remains the audit source. It uses a richer
+flat rule-key format than the production loader. Its companion source report
+documents 53 verified rules, 10 unverified rules, and 1 conflicting rule.
+Capital gains, late-filing interest, ambiguous let-out section 24(b), and
+personalized suggestions remain outside the demo scope.
 
 ## Schema and versioning
 

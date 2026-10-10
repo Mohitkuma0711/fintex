@@ -28,7 +28,8 @@ async def explain_suggestion(
     draft: SuggestionDraft,
     settings: Settings,
 ) -> SuggestionDraft:
-    if settings.google_api_key is None:
+    api_key = settings.google_api_key or settings.gemini_api_key
+    if api_key is None:
         return draft
     try:
         prompt = PROMPT_PATH.read_text(encoding="utf-8")
@@ -48,7 +49,7 @@ async def explain_suggestion(
         "tax_engine_explanation": draft.explanation,
     }
     client = genai.Client(
-        api_key=settings.google_api_key.get_secret_value(),
+        api_key=api_key.get_secret_value(),
         http_options=types.HttpOptions(
             timeout=settings.gemini_timeout_seconds * 1000,
             retry_options=types.HttpRetryOptions(attempts=1),

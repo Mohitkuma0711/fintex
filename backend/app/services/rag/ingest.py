@@ -188,8 +188,11 @@ async def _embed_batch(
 
 
 async def ingest(settings: Settings) -> int:
-    if settings.google_api_key is None:
-        raise RuntimeError("GOOGLE_API_KEY is required to build the knowledge-base index.")
+    api_key = settings.google_api_key or settings.gemini_api_key
+    if api_key is None:
+        raise RuntimeError(
+            "GOOGLE_API_KEY or GEMINI_API_KEY is required to build the knowledge-base index."
+        )
     source_dir = workspace_path(settings.knowledge_base_dir)
     documents = _source_documents(source_dir)
     if not documents:
@@ -203,7 +206,7 @@ async def ingest(settings: Settings) -> int:
         records.extend(section_chunks(path, metadata))
     texts = [record["content"] for record in records]
 
-    client = genai.Client(api_key=settings.google_api_key.get_secret_value())
+    client = genai.Client(api_key=api_key.get_secret_value())
     vectors: list[list[float]] = []
     async with client.aio as async_client:
         for offset in range(0, len(texts), EMBED_BATCH_SIZE):

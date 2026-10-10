@@ -1,23 +1,25 @@
 import pytest
-from pydantic import SecretStr, ValidationError
+from pydantic import ValidationError
 
 from app.core.config import Settings
 
 
 def test_blank_optional_environment_values_are_treated_as_unconfigured() -> None:
     settings = Settings(
-        firebase_api_key="",
-        firebase_auth_domain="",
-        firebase_storage_bucket="",
+        supabase_url="",
+        supabase_anon_key="",
+        supabase_jwt_secret="",
+        supabase_service_role_key="",
         tax_rules_file="",
     )
 
-    assert settings.firebase_api_key is None
-    assert settings.firebase_auth_domain is None
-    assert settings.firebase_storage_bucket is None
+    assert settings.supabase_url is None
+    assert settings.supabase_anon_key is None
+    assert settings.supabase_jwt_secret is None
+    assert settings.supabase_service_role_key is None
     assert settings.tax_rules_file is None
 
 
-def test_missing_firebase_api_key_raises_validation_error() -> None:
+def test_short_supabase_jwt_secret_raises_validation_error() -> None:
     with pytest.raises(ValidationError):
-        Settings(firebase_api_key="short")
+        Settings(supabase_jwt_secret="too-short-secret")

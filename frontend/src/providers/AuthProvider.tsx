@@ -1,23 +1,14 @@
 import {
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react'
-import {
-  GoogleAuthProvider,
-  browserLocalPersistence,
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  setPersistence,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  signOut,
-  type User,
-} from 'firebase/auth'
+import type { User } from '@supabase/supabase-js'
 import { clearApiResponseCache, setApiAccessTokenProvider } from '../lib/api'
 import { mintDevAuthToken } from '../lib/dev-auth-token'
-import { auth } from '../lib/firebase'
+import { supabase } from '../lib/supabase'
 import { AuthContext, type AuthContextValue } from './auth-context'
 
 export { useAuth } from './useAuth'
@@ -27,22 +18,33 @@ const useDevAuthTokens = import.meta.env.VITE_AUTH_TEST_MODE === 'true'
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const userRef = useRef<User | null>(user)
+  userRef.current = user
 
   useEffect(() => {
-    void setPersistence(auth, browserLocalPersistence)
     setApiAccessTokenProvider(async () => {
-      const current = auth.currentUser
-      if (!current) return null
-      if (useDevAuthTokens) return mintDevAuthToken(current.uid)
-      return current.getIdToken()
+      if (useDevAuthTokens && userRef.current) {
+        return mintDevAuthToken(userRef.current.id)
+      }
+      const { data } = await supabase.auth.getSession()
+      return data.session?.access_token ?? null
     })
-    const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
-      setUser(nextUser)
+
+    void supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+      setLoading(false)
+    })
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
       setLoading(false)
       clearApiResponseCache()
     })
+
     return () => {
-      unsubscribe()
+      subscription.unsubscribe()
       setApiAccessTokenProvider(async () => null)
     }
   }, [])
@@ -52,16 +54,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user,
       loading,
       async signInWithEmail(email, password) {
-        await signInWithEmailAndPassword(auth, email, password)
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        })
+        if (error) throw error
       },
       async signUpWithEmail(email, password) {
-        await createUserWithEmailAndPassword(auth, email, password)
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/upload`,
+          },
+        })
+        if (error) throw error
       },
       async signInWithGoogle() {
-        await signInWithPopup(auth, new GoogleAuthProvider())
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: `${window.location.origin}/upload`,
+          },
+        })
+        if (error) {
+          if (/provider is not enabled/i.test(error.message)) {
+            throw new Error(
+              'Google sign-in is not enabled for this Supabase project. Enable Google in Supabase Auth → Providers, then add its Google OAuth client ID and secret.',
+            )
+          }
+          throw error
+        }
       },
       async signOutUser() {
-        await signOut(auth)
+        const { error } = await supabase.auth.signOut()
+        if (error) throw error
+        setUser(null)
       },
     }),
     [loading, user],

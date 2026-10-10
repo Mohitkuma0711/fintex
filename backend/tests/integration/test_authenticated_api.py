@@ -46,7 +46,7 @@ from app.services.tax_engine.rules import RulesetVersion
 from tests.unit.tax_engine_fixtures import build_test_rules
 
 TEST_JWT_SECRET = "test-only-secret-key-that-is-never-used-outside-tests"
-FIREBASE_PROJECT_ID = "fintax-cbad3"
+SUPABASE_URL = "https://test-project.supabase.co"
 FIXTURE_DIRECTORY = Path(__file__).parents[1] / "fixtures" / "documents"
 FORM16_FIXTURE = json.loads(
     (FIXTURE_DIRECTORY / "synthetic_form16_extraction.json").read_text(encoding="utf-8")
@@ -63,7 +63,7 @@ class InMemoryStorage:
         self.upload_paths.append(object_path)
 
     async def create_signed_url(self, object_path: str) -> str:
-        return f"https://firebasestorage.googleapis.com/v0/b/fintax-cbad3.appspot.com/o"
+        return f"https://test-project.supabase.co/storage/v1/object/sign/fintax-private/{object_path}?token=test"
 
     async def download(self, object_path: str) -> bytes:
         return self.objects[object_path]
@@ -114,9 +114,9 @@ async def api_client(
     app.dependency_overrides[get_db_session] = test_session
     test_settings = Settings(
         database_url="sqlite+aiosqlite://",
-        firebase_project_id=FIREBASE_PROJECT_ID,
-        firebase_api_key=TEST_JWT_SECRET,
-        firebase_test_mode=True,
+        supabase_url=SUPABASE_URL,
+        supabase_jwt_secret=TEST_JWT_SECRET,
+        supabase_test_mode=True,
         google_api_key=None,
     )
     storage = InMemoryStorage()
@@ -143,22 +143,6 @@ async def api_client(
         return schema.model_validate(FORM16_FIXTURE)
 
     monkeypatch.setattr(GeminiExtractor, "extract", mock_gemini_extract)
-    # Monkeypatch Firebase auth to accept test JWT tokens
-    import app.core.auth as auth_module
-    original_verify = auth_module._verify_firebase_token
-    def test_verify_firebase_token(token, settings):
-        try:
-            import jwt
-            decoded = jwt.decode(
-                token,
-                TEST_JWT_SECRET,
-                algorithms=['HS256'],
-                audience=f'https://{FIREBASE_PROJECT_ID}.firebaseapp.com/auth/v1',
-            )
-            return decoded, ['HS256']
-        except Exception:
-            return original_verify(token, settings)
-    auth_module._verify_firebase_token = test_verify_firebase_token
     app.dependency_overrides[get_settings] = lambda: test_settings
     app.dependency_overrides[get_storage] = lambda: storage  # type: ignore[assignment]
     app.dependency_overrides[get_extraction_job] = lambda: extraction_job
@@ -179,7 +163,7 @@ def make_token(user_id: UUID, **overrides: object) -> str:
         "sub": str(user_id),
         "aud": "authenticated",
         "role": "authenticated",
-        "iss": f"https://{FIREBASE_PROJECT_ID}.firebaseapp.com/auth/v1",
+        "iss": f"{SUPABASE_URL}/auth/v1",
         "exp": datetime.now(UTC) + timedelta(minutes=5),
         "email": f"{user_id.hex}@example.test",
     }
@@ -252,7 +236,7 @@ async def test_jwt_signature_issuer_audience_and_expiry_are_verified(
             "sub": str(user_id),
             "aud": "authenticated",
             "role": "authenticated",
-            "iss": f"https://{FIREBASE_PROJECT_ID}.firebaseapp.com/auth/v1",
+            "iss": f"{SUPABASE_URL}/auth/v1",
             "exp": datetime.now(UTC) + timedelta(minutes=5),
         },
         "wrong-test-secret-is-long-enough-for-testing",

@@ -12,7 +12,7 @@ import { SmoothScrollProvider } from './providers/SmoothScrollProvider'
 import { ThemeProvider } from './providers/ThemeProvider'
 import { ToastProvider } from './providers/ToastProvider'
 import { AuthProvider } from './providers/AuthProvider'
-import './lib/firebase'
+import './lib/supabase'
 
 const sentryDsn = import.meta.env.VITE_SENTRY_DSN
 if (sentryDsn) {

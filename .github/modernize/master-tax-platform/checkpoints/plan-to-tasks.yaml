@@ -1,0 +1,23 @@
+plan: .github/modernize/master-tax-platform/plan.md
+phases:
+  - phase: 1
+    plan_items: ["1.1"]
+    tasks: ["T001", "T002", "T003"]
+  - phase: 2
+    plan_items: ["2.1"]
+    tasks: ["T004", "T005", "T006", "T007", "T008"]
+  - phase: 3
+    plan_items: ["3.1"]
+    tasks: ["T009", "T010", "T011", "T012"]
+  - phase: 4
+    plan_items: ["4.1"]
+    tasks: ["T013", "T014", "T015", "T016", "T017"]
+  - phase: 5
+    plan_items: ["5.1"]
+    tasks: ["T018", "T019", "T020", "T021"]
+  - phase: 6
+    plan_items: ["6.1", "7.1"]
+    tasks: ["T022", "T023", "T024"]
+  - phase: 7
+    plan_items: ["8.1"]
+    tasks: ["T025", "T026", "T027"]
